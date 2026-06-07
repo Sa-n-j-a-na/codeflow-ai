@@ -20,7 +20,8 @@ async def refresh_flow(request: RefreshRequest):
     if not os.path.exists(request.path):
         raise HTTPException(status_code=400, detail="Path not found")
 
-    result = run_agent(request.path, request.flow_type)
+    # Run all flows on refresh too
+    result = run_agent(request.path)
     return result
 
 @router.get("/flow-types")

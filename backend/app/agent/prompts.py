@@ -14,7 +14,12 @@ RULES:
 3. Every node needs a clear description
 4. Return ONLY valid JSON — no markdown, no explanation
 5. Minimum 5 nodes, maximum 20 nodes
-6. Position nodes in a logical left-to-right or top-to-bottom flow
+6. 5. Position nodes LEFT TO RIGHT as main flow direction
+   - Start nodes at x=100, y=300
+   - Each next layer adds 300 to x
+   - Branch nodes go above/below main line (y ± 150)
+   - Keep x spacing at 300, y spacing at 150
+   - This creates a clean horizontal flow diagram
 
 RETURN THIS EXACT JSON STRUCTURE:
 {
