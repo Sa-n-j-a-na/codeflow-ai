@@ -1,0 +1,387 @@
+{
+  "project_id": "github_com_sa_n_j_a_na_defaulters_git",
+  "source": "https://github.com/Sa-n-j-a-na/Defaulters.git",
+  "created_at": "2026-06-07T21:00:58.793762",
+  "last_updated": "2026-06-07T21:00:58.793821",
+  "version": 1,
+  "flows": {
+    "system_flow": {
+      "title": "Defaulter Tracking System Architecture",
+      "description": "This system tracks student defaulters in an educational institute, allowing different roles (Physical Education, Mentors, HODs) to manage data and generate reports. It's built with a React frontend, Node.js/Express.js backend, and MongoDB for data storage, including a separate email notification service.",
+      "nodes": [
+        {
+          "id": "user",
+          "type": "actor",
+          "label": "Users (PE, Mentor, HOD)",
+          "description": "Human users interacting with the system to input defaulter data, view reports, and manage student records based on their roles.",
+          "technology": "Human",
+          "position": {
+            "x": 100,
+            "y": 300
+          }
+        },
+        {
+          "id": "frontend_app",
+          "type": "component",
+          "label": "Frontend Web Application",
+          "description": "The user interface built with React, providing login, data entry forms, and various report viewing and generation functionalities for different user roles.",
+          "technology": "React.js, React Router, Axios, ExcelJS, File-Saver, XLSX",
+          "position": {
+            "x": 400,
+            "y": 300
+          }
+        },
+        {
+          "id": "backend_api",
+          "type": "component",
+          "label": "Backend API Server",
+          "description": "A Node.js/Express.js application that handles user authentication, processes requests for adding and retrieving defaulter data, and orchestrates report generation and email notifications.",
+          "technology": "Node.js, Express.js, CORS, Body-parser, MongoDB Driver",
+          "position": {
+            "x": 700,
+            "y": 300
+          }
+        },
+        {
+          "id": "mongodb_database",
+          "type": "datastore",
+          "label": "MongoDB Database",
+          "description": "The NoSQL database storing all application data, including user accounts, student details, and records of latecomers and dress code violations.",
+          "technology": "MongoDB",
+          "position": {
+            "x": 1000,
+            "y": 450
+          }
+        },
+        {
+          "id": "email_service",
+          "type": "service",
+          "label": "Email Notification Service",
+          "description": "A separate Node.js/Express.js service that sends automated email notifications based on requests from the Backend API, such as alerts about defaulters or reports.",
+          "technology": "Node.js, Express.js, Nodemailer",
+          "position": {
+            "x": 1000,
+            "y": 150
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "user_to_frontend",
+          "source": "user",
+          "target": "frontend_app",
+          "label": "Interacts with UI",
+          "description": "Users access the web interface for various operations (login, data entry, report viewing)."
+        },
+        {
+          "id": "frontend_to_backend_api_request",
+          "source": "frontend_app",
+          "target": "backend_api",
+          "label": "Sends API Requests",
+          "description": "The frontend sends HTTP requests for login, data submission, and report queries to the backend."
+        },
+        {
+          "id": "backend_api_to_frontend_response",
+          "source": "backend_api",
+          "target": "frontend_app",
+          "label": "Returns API Responses",
+          "description": "The backend processes requests and sends back data, authentication tokens, and status messages to the frontend."
+        },
+        {
+          "id": "backend_to_mongodb_read_write",
+          "source": "backend_api",
+          "target": "mongodb_database",
+          "label": "Performs CRUD Operations",
+          "description": "The backend reads user data, student records, and defaulter entries from, and writes new defaulter data to, the MongoDB database."
+        },
+        {
+          "id": "backend_to_email_service",
+          "source": "backend_api",
+          "target": "email_service",
+          "label": "Triggers Email Requests",
+          "description": "The backend sends requests to the Email Notification Service to initiate email sending for reports or alerts."
+        }
+      ]
+    },
+    "api_flow": {
+      "title": "Defaulter Tracking System API Flow",
+      "description": "This API flow diagram illustrates the journey of a client request to a final response in the Defaulter Tracking System application.",
+      "nodes": [
+        {
+          "id": "node_1",
+          "type": "endpoint",
+          "label": "Client Request",
+          "description": "The client sends a request to the server",
+          "method": "",
+          "path": "",
+          "position": {
+            "x": 100,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_2",
+          "type": "middleware",
+          "label": "Authentication Middleware",
+          "description": "Verify client credentials and authenticate the request",
+          "method": "",
+          "path": "",
+          "position": {
+            "x": 300,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_3",
+          "type": "endpoint",
+          "label": "GET /api/defaulter",
+          "description": "Retrieve defaulter data from the database",
+          "method": "GET",
+          "path": "/api/defaulter",
+          "position": {
+            "x": 500,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_4",
+          "type": "endpoint",
+          "label": "POST /api/defaulter",
+          "description": "Create new defaulter data in the database",
+          "method": "POST",
+          "path": "/api/defaulter",
+          "position": {
+            "x": 700,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_5",
+          "type": "endpoint",
+          "label": "GET /api/report",
+          "description": "Generate report data from the database",
+          "method": "GET",
+          "path": "/api/report",
+          "position": {
+            "x": 900,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_6",
+          "type": "endpoint",
+          "label": "Error Handling",
+          "description": "Handle errors and exceptions",
+          "method": "",
+          "path": "",
+          "position": {
+            "x": 1100,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_7",
+          "type": "endpoint",
+          "label": "Response",
+          "description": "Send response back to the client",
+          "method": "",
+          "path": "",
+          "position": {
+            "x": 1300,
+            "y": 100
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_1",
+          "source": "node_1",
+          "target": "node_2",
+          "label": "sends request",
+          "description": "Client sends request to server"
+        },
+        {
+          "id": "edge_2",
+          "source": "node_2",
+          "target": "node_3",
+          "label": "authenticates",
+          "description": "Authentication middleware authenticates the request"
+        },
+        {
+          "id": "edge_3",
+          "source": "node_3",
+          "target": "node_4",
+          "label": "sends data",
+          "description": "Retrieve defaulter data from the database"
+        },
+        {
+          "id": "edge_4",
+          "source": "node_4",
+          "target": "node_5",
+          "label": "creates data",
+          "description": "Create new defaulter data in the database"
+        },
+        {
+          "id": "edge_5",
+          "source": "node_5",
+          "target": "node_6",
+          "label": "generates report",
+          "description": "Generate report data from the database"
+        },
+        {
+          "id": "edge_6",
+          "source": "node_6",
+          "target": "node_7",
+          "label": "sends response",
+          "description": "Send response back to the client"
+        }
+      ]
+    },
+    "data_flow": {
+      "title": "Defaulter Tracking System Data Flow",
+      "description": "This system tracks defaulters in an institute, built using the MERN Stack (MongoDB, Express, React, Node.js).",
+      "nodes": [
+        {
+          "id": "node_1",
+          "type": "input",
+          "label": "User Input",
+          "description": "User enters defaulter data (Roll No., Type - e.g., latecomer, dress code).",
+          "data_type": "input",
+          "position": {
+            "x": 100,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_2",
+          "type": "transform",
+          "label": "Data Validation",
+          "description": "Data is validated to prevent duplicate entries for the same day and same type.",
+          "data_type": "transform",
+          "position": {
+            "x": 300,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_3",
+          "type": "storage",
+          "label": "MongoDB Database",
+          "description": "Defaulter data is stored in the MongoDB database.",
+          "data_type": "storage",
+          "position": {
+            "x": 500,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_4",
+          "type": "transform",
+          "label": "Report Generation",
+          "description": "Reports are generated based on defaulter type, from date, and to date.",
+          "data_type": "transform",
+          "position": {
+            "x": 700,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_5",
+          "type": "output",
+          "label": "Report Display",
+          "description": "Reports are displayed to the user.",
+          "data_type": "output",
+          "position": {
+            "x": 900,
+            "y": 100
+          }
+        },
+        {
+          "id": "node_6",
+          "type": "storage",
+          "label": "Mentor Overview",
+          "description": "Mentor overview data is stored in the MongoDB database.",
+          "data_type": "storage",
+          "position": {
+            "x": 500,
+            "y": 300
+          }
+        },
+        {
+          "id": "node_7",
+          "type": "transform",
+          "label": "Repeated Defaulter Detection",
+          "description": "Repeated defaulters are detected and stored in the MongoDB database.",
+          "data_type": "transform",
+          "position": {
+            "x": 700,
+            "y": 300
+          }
+        },
+        {
+          "id": "node_8",
+          "type": "output",
+          "label": "Mentor Report",
+          "description": "Mentor reports are displayed to the user.",
+          "data_type": "output",
+          "position": {
+            "x": 900,
+            "y": 300
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_1",
+          "source": "node_1",
+          "target": "node_2",
+          "label": "transforms to",
+          "description": "Data is validated before being stored in the database."
+        },
+        {
+          "id": "edge_2",
+          "source": "node_2",
+          "target": "node_3",
+          "label": "stored in",
+          "description": "Defaulter data is stored in the MongoDB database."
+        },
+        {
+          "id": "edge_3",
+          "source": "node_3",
+          "target": "node_4",
+          "label": "transforms to",
+          "description": "Reports are generated based on defaulter type, from date, and to date."
+        },
+        {
+          "id": "edge_4",
+          "source": "node_4",
+          "target": "node_5",
+          "label": "displays",
+          "description": "Reports are displayed to the user."
+        },
+        {
+          "id": "edge_5",
+          "source": "node_3",
+          "target": "node_6",
+          "label": "stored in",
+          "description": "Mentor overview data is stored in the MongoDB database."
+        },
+        {
+          "id": "edge_6",
+          "source": "node_6",
+          "target": "node_7",
+          "label": "transforms to",
+          "description": "Repeated defaulters are detected and stored in the MongoDB database."
+        },
+        {
+          "id": "edge_7",
+          "source": "node_7",
+          "target": "node_8",
+          "label": "displays",
+          "description": "Mentor reports are displayed to the user."
+        }
+      ]
+    }
+  },
+  "diff_history": []
+}

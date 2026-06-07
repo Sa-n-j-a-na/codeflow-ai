@@ -13,6 +13,7 @@ router = APIRouter()
 class GithubRequest(BaseModel):
     github_url: str
     flow_type: str = "system_flow"
+    force_refresh: bool = False  # ← new
 
 def force_delete(path: str):
     """
@@ -48,7 +49,12 @@ async def analyze_github(request: GithubRequest):
         print("Clone complete!")
 
         print("Starting agent...")
-        result = run_agent(clone_dir, request.flow_type)
+        result = run_agent(
+            clone_dir,
+            request.flow_type,
+            source_url=request.github_url,
+            force_refresh=request.force_refresh
+        )
         result["source_path"] = clone_dir
         return result
 

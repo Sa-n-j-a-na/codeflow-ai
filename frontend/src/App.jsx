@@ -1,6 +1,7 @@
 import { useState } from "react"
 import FlowCanvas from "./components/FlowCanvas"
 import { useFlow } from "./hooks/useFlow"
+import DiffPanel from "./components/DiffPanel"
 
 const TABS = [
   { id: "system_flow", label: "⚙️ System Flow" },
@@ -16,7 +17,7 @@ export default function App() {
     currentFlow,
     activeTab, setActiveTab,
     loading, error, meta, lastPath,
-    handleGithub, handleUpload, handleRefresh
+    handleGithub, handleUpload, handleRefresh, diff
   } = useFlow()
 
   return (
@@ -226,6 +227,7 @@ export default function App() {
           flowTitle={currentFlow?.title}
           flowDescription={currentFlow?.description}
         />
+        <DiffPanel diff={diff} />
       </div>
 
     </div>

@@ -1,0 +1,72 @@
+{
+  "project_id": "github_com_sa_n_j_a_na_aluministudentplatform_git",
+  "source": "https://github.com/Sa-n-j-a-na/AluminiStudentPlatform.git",
+  "last_analyzed": "2026-06-07T20:26:00.185477",
+  "version": 2,
+  "architecture": {
+    "nodes": [
+      {
+        "id": "node_1",
+        "label": "Client Web Browser",
+        "type": "external_user",
+        "technology": "Web Browser"
+      },
+      {
+        "id": "node_2",
+        "label": "React Frontend Application",
+        "type": "component",
+        "technology": "React.js"
+      },
+      {
+        "id": "node_3",
+        "label": "Node.js Express API Server",
+        "type": "component",
+        "technology": "Node.js / Express.js"
+      },
+      {
+        "id": "node_4",
+        "label": "MongoDB Database",
+        "type": "database",
+        "technology": "MongoDB"
+      },
+      {
+        "id": "node_5",
+        "label": "Local File Storage",
+        "type": "storage",
+        "technology": "File System"
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_1",
+        "source": "node_1",
+        "target": "node_2",
+        "label": "Accesses"
+      },
+      {
+        "id": "edge_2",
+        "source": "node_2",
+        "target": "node_3",
+        "label": "Sends API Requests"
+      },
+      {
+        "id": "edge_3",
+        "source": "node_3",
+        "target": "node_4",
+        "label": "Reads/Writes Data"
+      },
+      {
+        "id": "edge_4",
+        "source": "node_3",
+        "target": "node_5",
+        "label": "Stores/Retrieves Files"
+      },
+      {
+        "id": "edge_5",
+        "source": "node_1",
+        "target": "node_5",
+        "label": "Downloads Files (via URL)"
+      }
+    ]
+  }
+}

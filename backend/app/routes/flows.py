@@ -8,6 +8,7 @@ router = APIRouter()
 class RefreshRequest(BaseModel):
     path: str
     flow_type: str = "system_flow"
+    source_url: str = None
 
 FLOW_TYPES = [
     {"id": "system_flow", "label": "System Flow", "description": "Overall architecture and component relationships"},
@@ -21,7 +22,11 @@ async def refresh_flow(request: RefreshRequest):
         raise HTTPException(status_code=400, detail="Path not found")
 
     # Run all flows on refresh too
-    result = run_agent(request.path)
+    result = run_agent(
+        request.path,
+        source_url=request.source_url,
+        force_refresh=True   # ← always force on refresh
+    )
     return result
 
 @router.get("/flow-types")

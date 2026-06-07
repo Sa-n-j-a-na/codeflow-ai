@@ -22,12 +22,12 @@ export const analyzeGithub = (githubUrl, flowType) => {
 }
 
 // Refresh existing analysis
-export const refreshFlow = (path, flowType) => {
-  return API.post("/refresh", {
-    path: path,
-    flow_type: flowType
+export const refreshFlow = (path, flowType, sourceUrl) =>
+  API.post("/refresh", {
+    path,
+    flow_type: flowType,
+    source_url: sourceUrl
   })
-}
 
 // Get available flow types
 export const getFlowTypes = () => {

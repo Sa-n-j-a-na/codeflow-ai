@@ -30,7 +30,11 @@ async def upload_codebase(
             z.extractall(extract_path)
 
         # NOW call the agent
-        result = run_agent(extract_path, flow_type)
+        result = run_agent(
+            extract_path,
+            flow_type,
+            source_url=f"upload_{file.filename}"  # ← pass filename
+        )
         result["source_path"] = extract_path
         return result
 
