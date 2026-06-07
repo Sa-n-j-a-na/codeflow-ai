@@ -10,3 +10,4 @@ tree-sitter-javascript
 python-dotenv
 aiofiles
 pathlib
+google-genai
