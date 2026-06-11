@@ -2,20 +2,32 @@ import ReactFlow, {
   Background,
   Controls,
   MiniMap,
+  MarkerType,
   useNodesState,
   useEdgesState
 } from "reactflow"
 import "reactflow/dist/style.css"
-import { useEffect } from "react"
+import { useEffect, useState, useCallback } from "react"
 import NodeCard from "./NodeCard"
+import DetailPanel from "./DetailPanel"
 
-// Outside component — React Flow requires this
 const nodeTypes = { custom: NodeCard }
 
 export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle, flowDescription }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [selectedNode, setSelectedNode] = useState(null)
 
+  // ✅ useCallback OUTSIDE useEffect
+  const onNodeClick = useCallback((event, node) => {
+    setSelectedNode(node)
+  }, [])
+
+  const onPaneClick = useCallback(() => {
+    setSelectedNode(null)
+  }, [])
+
+  // ✅ useEffect only for data mapping
   useEffect(() => {
     if (!rawNodes?.length) return
 
@@ -30,6 +42,7 @@ export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle
         technology: node.technology,
         method: node.method,
         path: node.path,
+        file_path: node.file_path,
         data_type: node.data_type
       }
     }))
@@ -39,30 +52,44 @@ export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle
       source: edge.source,
       target: edge.target,
       label: edge.label,
-      animated: true,
-      style: { stroke: "#6366f1", strokeWidth: 2 },
-      labelStyle: { fill: "#9090b0", fontSize: 10 },
-      labelBgStyle: { fill: "#1a1a2e", fillOpacity: 0.9 },
-      labelBgPadding: [4, 8],
+      type: "smoothstep",
+      animated: false,
+      style: {
+        stroke: "#3d3d6b",
+        strokeWidth: 1.5
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: "#3d3d6b",
+        width: 12,
+        height: 12
+      },
+      labelStyle: {
+        fill: "#6b6b8a",
+        fontSize: 9,
+        fontWeight: 500
+      },
+      labelBgStyle: {
+        fill: "#0d0d1a",
+        fillOpacity: 0.9
+      },
+      labelBgPadding: [3, 6],
       labelBgBorderRadius: 4
     }))
 
     setNodes(mappedNodes)
     setEdges(mappedEdges)
+    setSelectedNode(null)
 
   }, [rawNodes, rawEdges])
 
   if (!rawNodes?.length) {
     return (
       <div style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#0d0d1a",
-        gap: "12px"
+        width: "100%", height: "100%",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        background: "#0d0d1a", gap: "12px"
       }}>
         <div style={{ fontSize: "40px" }}>⚡</div>
         <div style={{ color: "white", fontSize: "18px", fontWeight: "bold" }}>
@@ -78,11 +105,12 @@ export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
+
+      {/* Flow title overlay */}
       {flowTitle && (
         <div style={{
           position: "absolute",
-          top: 16, left: 16,
-          zIndex: 10,
+          top: 16, left: 16, zIndex: 10,
           background: "#1a1a2eee",
           border: "1px solid #1e1e3a",
           borderRadius: "10px",
@@ -91,16 +119,13 @@ export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle
           backdropFilter: "blur(8px)"
         }}>
           <div style={{
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "13px",
-            marginBottom: "4px"
+            color: "white", fontWeight: "bold",
+            fontSize: "13px", marginBottom: "4px"
           }}>
             {flowTitle}
           </div>
           <div style={{
-            color: "#6b6b8a",
-            fontSize: "11px",
+            color: "#6b6b8a", fontSize: "11px",
             lineHeight: "1.5"
           }}>
             {flowDescription}
@@ -108,12 +133,20 @@ export default function FlowCanvas({ nodes: rawNodes, edges: rawEdges, flowTitle
         </div>
       )}
 
+      {/* Detail panel — slides in on node click */}
+      <DetailPanel
+        node={selectedNode}
+        onClose={() => setSelectedNode(null)}
+      />
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         fitView
         fitViewOptions={{ padding: 0.2 }}
         minZoom={0.1}

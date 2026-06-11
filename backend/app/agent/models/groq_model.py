@@ -7,34 +7,37 @@ def call_groq_model(prompt: str, model: str) -> str:
     try:
         print(f"  Calling Groq {model}...")
         print(f"  Prompt size: {len(prompt):,} chars (~{len(prompt)//4:,} tokens)")
+
         response = client.chat.completions.create(
             model=model,
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a senior software architect. Respond with valid JSON only. No markdown, no explanation."
+                    "content": "You are a senior software architect. Respond with valid JSON only. No markdown, no explanation. Never truncate the JSON — always close all brackets and braces."
                 },
                 {
                     "role": "user",
                     "content": prompt
                 }
             ],
-            temperature=0.3
+            temperature=0.3,
+            max_tokens=4000  # ← force enough output tokens
         )
         print(f"  ✅ Groq {model} responded!")
         return response.choices[0].message.content
+
     except Exception as e:
         print(f"  ❌ Groq {model} failed: {e}")
         return None
 
 
 def call_groq(prompt: str) -> str:
-    # Try 8b first — faster, higher TPM limit
-    result = call_groq_model(prompt, "llama-3.1-8b-instant")
+    # Try llama-3.3-70b first — better output, higher limits
+    result = call_groq_model(prompt, "llama-3.3-70b-versatile")
     if result:
         return result
-    # Fallback to 70b
-    result = call_groq_model(prompt, "llama-3.3-70b-versatile")
+    # Fallback to 8b
+    result = call_groq_model(prompt, "llama-3.1-8b-instant")
     return result
 
 

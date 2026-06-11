@@ -1,194 +1,638 @@
 {
   "project_id": "github_com_sa_n_j_a_na_defaulters_git",
   "source": "https://github.com/Sa-n-j-a-na/Defaulters.git",
-  "created_at": "2026-06-07T21:00:58.793762",
-  "last_updated": "2026-06-07T21:00:58.793821",
+  "created_at": "2026-06-11T07:41:02.052483",
+  "last_updated": "2026-06-11T07:41:02.052582",
   "version": 1,
   "flows": {
     "system_flow": {
-      "title": "Defaulter Tracking System Architecture",
-      "description": "This system tracks student defaulters in an educational institute, allowing different roles (Physical Education, Mentors, HODs) to manage data and generate reports. It's built with a React frontend, Node.js/Express.js backend, and MongoDB for data storage, including a separate email notification service.",
+      "title": "Defaulter Tracking System",
+      "description": "A web application built with the MERN stack to track student defaulters (latecomers, dress code violations) in an educational institute. It provides role-based access for Physical Education (PE), Mentors, and HODs to enter data, view reports, and track repeated offenses, streamlining a previously manual process.",
       "nodes": [
         {
-          "id": "user",
+          "id": "actor_pe",
           "type": "actor",
-          "label": "Users (PE, Mentor, HOD)",
-          "description": "Human users interacting with the system to input defaulter data, view reports, and manage student records based on their roles.",
+          "label": "User: PE",
+          "description": "Physical Education faculty responsible for entering daily defaulter data and generating basic reports.",
           "technology": "Human",
+          "file_path": "N/A",
           "position": {
-            "x": 100,
-            "y": 300
+            "x": 150,
+            "y": 80
           }
         },
         {
-          "id": "frontend_app",
+          "id": "actor_mentor",
+          "type": "actor",
+          "label": "User: Mentor",
+          "description": "Faculty member responsible for viewing defaulter status of their assigned mentees and accessing cumulative reports.",
+          "technology": "Human",
+          "file_path": "N/A",
+          "position": {
+            "x": 150,
+            "y": 260
+          }
+        },
+        {
+          "id": "actor_hod",
+          "type": "actor",
+          "label": "User: HOD",
+          "description": "Head of Department responsible for overseeing defaulters within their department, generating detailed and repeated defaulter reports, and mentor activity overviews.",
+          "technology": "Human",
+          "file_path": "N/A",
+          "position": {
+            "x": 150,
+            "y": 440
+          }
+        },
+        {
+          "id": "client_index",
+          "type": "entry_point",
+          "label": "client/src/index.js \u2014 Client Entry",
+          "description": "The main entry point for the React client-side application, responsible for rendering the root 'App' component into the DOM.",
+          "technology": "React, JavaScript",
+          "file_path": "client/src/index.js",
+          "position": {
+            "x": 150,
+            "y": 620
+          }
+        },
+        {
+          "id": "client_app",
           "type": "component",
-          "label": "Frontend Web Application",
-          "description": "The user interface built with React, providing login, data entry forms, and various report viewing and generation functionalities for different user roles.",
-          "technology": "React.js, React Router, Axios, ExcelJS, File-Saver, XLSX",
+          "label": "client/src/App.js \u2014 Root Component",
+          "description": "The root React component setting up the application's routing (React Router) and providing the authentication context to all child components.",
+          "technology": "React, React Router",
+          "file_path": "client/src/App.js",
           "position": {
-            "x": 400,
+            "x": 430,
             "y": 300
           }
         },
         {
-          "id": "backend_api",
+          "id": "client_auth_context",
+          "type": "module",
+          "label": "client/src/AuthContext.js \u2014 Auth Context",
+          "description": "Provides authentication state (isAuthenticated) and methods (login, logout) to the React component tree. Communicates with the backend for session validation and termination.",
+          "technology": "React Context, axios",
+          "file_path": "client/src/AuthContext.js",
+          "position": {
+            "x": 990,
+            "y": 80
+          }
+        },
+        {
+          "id": "client_private_route",
           "type": "component",
-          "label": "Backend API Server",
-          "description": "A Node.js/Express.js application that handles user authentication, processes requests for adding and retrieving defaulter data, and orchestrates report generation and email notifications.",
-          "technology": "Node.js, Express.js, CORS, Body-parser, MongoDB Driver",
+          "label": "client/src/PrivateRoute.js \u2014 Route Guard",
+          "description": "A React component wrapper that protects routes, ensuring only authenticated users can access the wrapped components. Redirects unauthenticated users to the login page.",
+          "technology": "React, React Router",
+          "file_path": "client/src/PrivateRoute.js",
           "position": {
-            "x": 700,
+            "x": 710,
+            "y": 260
+          }
+        },
+        {
+          "id": "client_home",
+          "type": "page",
+          "label": "client/src/Home.js \u2014 Login Page",
+          "description": "The initial user interface for login. Handles username, password, and role selection, then sends credentials to the backend for authentication. Navigates to the appropriate dashboard on successful login.",
+          "technology": "React, axios",
+          "file_path": "client/src/Home.js",
+          "position": {
+            "x": 710,
+            "y": 80
+          }
+        },
+        {
+          "id": "client_pt_dashboard",
+          "type": "page",
+          "label": "client/src/components/Pt.js \u2014 PE Dashboard",
+          "description": "Dashboard for Physical Education staff. Allows inputting new defaulter records and accessing general reports.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/Pt.js",
+          "position": {
+            "x": 710,
+            "y": 440
+          }
+        },
+        {
+          "id": "client_hod_dashboard",
+          "type": "page",
+          "label": "client/src/components/Hod.js \u2014 HOD Dashboard",
+          "description": "Dashboard for HODs. Displays department-specific defaulter information and options to generate various reports including mentor overview.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/Hod.js",
+          "position": {
+            "x": 710,
+            "y": 620
+          }
+        },
+        {
+          "id": "client_mentor_dashboard",
+          "type": "page",
+          "label": "client/src/components/Mentor.js \u2014 Mentor Dashboard",
+          "description": "Dashboard for Mentors. Displays defaulter status for their assigned mentees and allows generating mentor-specific reports.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/Mentor.js",
+          "position": {
+            "x": 710,
+            "y": 800
+          }
+        },
+        {
+          "id": "client_defaulter_report",
+          "type": "component",
+          "label": "client/src/components/DefaulterReport.js \u2014 Defaulter Report",
+          "description": "Generates and displays detailed defaulter reports (latecomers, dress code) based on selected criteria (year, type, date range). Provides functionality to export data to an Excel file.",
+          "technology": "React, axios, ExcelJS, FileSaver.js",
+          "file_path": "client/src/components/DefaulterReport.js",
+          "position": {
+            "x": 710,
+            "y": 980
+          }
+        },
+        {
+          "id": "client_report_display",
+          "type": "component",
+          "label": "client/src/components/ReportDisplay.js \u2014 Generic Report",
+          "description": "A reusable component for displaying general defaulter reports based on URL parameters. Typically used by PE staff.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/ReportDisplay.js",
+          "position": {
+            "x": 710,
+            "y": 1160
+          }
+        },
+        {
+          "id": "client_hod_repeated_defaulters",
+          "type": "component",
+          "label": "client/src/components/HodRepeatedDefaultersReport.js \u2014 HOD Repeated Report",
+          "description": "Displays reports for HODs showing students who are repeated defaulters within their department, including cumulative data.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/HodRepeatedDefaultersReport.js",
+          "position": {
+            "x": 710,
+            "y": 1340
+          }
+        },
+        {
+          "id": "client_mentor_repeated_defaulters",
+          "type": "component",
+          "label": "client/src/components/MentorRepeatedDefaultersReport.js \u2014 Mentor Repeated Report",
+          "description": "Displays reports for Mentors showing their mentees who are repeated defaulters, including cumulative data.",
+          "technology": "React, axios",
+          "file_path": "client/src/components/MentorRepeatedDefaultersReport.js",
+          "position": {
+            "x": 710,
+            "y": 1520
+          }
+        },
+        {
+          "id": "client_axios",
+          "type": "module",
+          "label": "axios \u2014 HTTP Client",
+          "description": "A Promise-based HTTP client for the browser and node.js, used by the React frontend to make API calls to the backend.",
+          "technology": "JavaScript Library",
+          "file_path": "client/package.json",
+          "position": {
+            "x": 990,
+            "y": 260
+          }
+        },
+        {
+          "id": "client_exceljs",
+          "type": "module",
+          "label": "exceljs \u2014 Excel Generator",
+          "description": "A library for generating Excel workbooks (XLSX, CSV) directly in the browser or Node.js. Used for report exports.",
+          "technology": "JavaScript Library",
+          "file_path": "client/package.json",
+          "position": {
+            "x": 990,
+            "y": 440
+          }
+        },
+        {
+          "id": "client_file_saver",
+          "type": "module",
+          "label": "file-saver \u2014 File Download",
+          "description": "Provides client-side save functionality, used in conjunction with ExcelJS to trigger file downloads for generated reports.",
+          "technology": "JavaScript Library",
+          "file_path": "client/package.json",
+          "position": {
+            "x": 990,
+            "y": 620
+          }
+        },
+        {
+          "id": "server_main",
+          "type": "service",
+          "label": "server/server.js \u2014 Main API Backend",
+          "description": "The core Express.js server application. Handles all API requests for user authentication, defaulter data management, and report generation. Interacts with MongoDB.",
+          "technology": "Node.js, Express.js",
+          "file_path": "server/server.js",
+          "position": {
+            "x": 1270,
             "y": 300
           }
         },
         {
-          "id": "mongodb_database",
-          "type": "datastore",
+          "id": "database_mongodb",
+          "type": "database",
           "label": "MongoDB Database",
-          "description": "The NoSQL database storing all application data, including user accounts, student details, and records of latecomers and dress code violations.",
+          "description": "The NoSQL database storing all application data, including user credentials, roles, student details, defaulter records, and academic information.",
           "technology": "MongoDB",
+          "file_path": "N/A",
           "position": {
-            "x": 1000,
-            "y": 450
+            "x": 1550,
+            "y": 210
           }
         },
         {
           "id": "email_service",
           "type": "service",
-          "label": "Email Notification Service",
-          "description": "A separate Node.js/Express.js service that sends automated email notifications based on requests from the Backend API, such as alerts about defaulters or reports.",
-          "technology": "Node.js, Express.js, Nodemailer",
+          "label": "email-service/index.js (Implied) \u2014 Email Service",
+          "description": "A separate Node.js service, likely exposing an API endpoint, responsible for sending email notifications (e.g., to mentors/HODs about repeated defaulters).",
+          "technology": "Node.js, Express.js",
+          "file_path": "email-service/package.json",
           "position": {
-            "x": 1000,
-            "y": 150
+            "x": 1550,
+            "y": 390
+          }
+        },
+        {
+          "id": "email_nodemailer",
+          "type": "module",
+          "label": "nodemailer \u2014 Email Sender",
+          "description": "A module for Node.js applications to send emails. Used by the email service to dispatch notifications.",
+          "technology": "Node.js Library",
+          "file_path": "email-service/package.json",
+          "position": {
+            "x": 1830,
+            "y": 300
           }
         }
       ],
       "edges": [
         {
-          "id": "user_to_frontend",
-          "source": "user",
-          "target": "frontend_app",
-          "label": "Interacts with UI",
-          "description": "Users access the web interface for various operations (login, data entry, report viewing)."
+          "id": "e_client_index_app",
+          "source": "client_index",
+          "target": "client_app",
+          "label": "renders",
+          "description": "ReactDOM.createRoot().render(<App />)"
         },
         {
-          "id": "frontend_to_backend_api_request",
-          "source": "frontend_app",
-          "target": "backend_api",
-          "label": "Sends API Requests",
-          "description": "The frontend sends HTTP requests for login, data submission, and report queries to the backend."
+          "id": "e_client_app_auth_context",
+          "source": "client_app",
+          "target": "client_auth_context",
+          "label": "provides context",
+          "description": "<AuthProvider>"
         },
         {
-          "id": "backend_api_to_frontend_response",
-          "source": "backend_api",
-          "target": "frontend_app",
-          "label": "Returns API Responses",
-          "description": "The backend processes requests and sends back data, authentication tokens, and status messages to the frontend."
+          "id": "e_client_app_private_route",
+          "source": "client_app",
+          "target": "client_private_route",
+          "label": "uses for routing",
+          "description": "<Route path=\"/pt\" element={<PrivateRoute element={<Pt />} />} />"
         },
         {
-          "id": "backend_to_mongodb_read_write",
-          "source": "backend_api",
-          "target": "mongodb_database",
-          "label": "Performs CRUD Operations",
-          "description": "The backend reads user data, student records, and defaulter entries from, and writes new defaulter data to, the MongoDB database."
+          "id": "e_client_app_home_route",
+          "source": "client_app",
+          "target": "client_home",
+          "label": "routes to",
+          "description": "<Route path=\"/\" element={<Home />} />"
         },
         {
-          "id": "backend_to_email_service",
-          "source": "backend_api",
+          "id": "e_client_app_pt_route",
+          "source": "client_app",
+          "target": "client_pt_dashboard",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/pt\" element={<PrivateRoute element={<Pt />} />} />"
+        },
+        {
+          "id": "e_client_app_hod_route",
+          "source": "client_app",
+          "target": "client_hod_dashboard",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/hod\" element={<PrivateRoute element={<Hod />} />} />"
+        },
+        {
+          "id": "e_client_app_mentor_route",
+          "source": "client_app",
+          "target": "client_mentor_dashboard",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/mentor\" element={<PrivateRoute element={<Mentor />} />} />"
+        },
+        {
+          "id": "e_client_app_defaulter_report_route",
+          "source": "client_app",
+          "target": "client_defaulter_report",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/defaulterreport/:year/:defaulterType/:fromDate/:toDate\" element={<PrivateRoute element={<DefaulterReport />} />} />"
+        },
+        {
+          "id": "e_client_app_report_display_route",
+          "source": "client_app",
+          "target": "client_report_display",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/report/:defaulterType/:fromDate/:toDate\" element={<PrivateRoute element={<ReportDisplay />} />} />"
+        },
+        {
+          "id": "e_client_app_hod_repeated_defaulters_route",
+          "source": "client_app",
+          "target": "client_hod_repeated_defaulters",
+          "label": "routes to",
+          "description": "<Route path=\"/hodRepeatedDefaulters/:dept/:defaulterType/:fromDate/:toDate\" element={<HodRepeatedDefaultersReport/>} />"
+        },
+        {
+          "id": "e_client_app_mentor_repeated_defaulters_route",
+          "source": "client_app",
+          "target": "client_mentor_repeated_defaulters",
+          "label": "routes to (via PrivateRoute)",
+          "description": "<Route path=\"/mentorRepeatedDefaulters/:mentorName/:defaulterType/:fromDate/:toDate\" element={<PrivateRoute element={<MentorRepeatedDefaultersReport />} />} />"
+        },
+        {
+          "id": "e_client_home_auth_context",
+          "source": "client_home",
+          "target": "client_auth_context",
+          "label": "uses login()",
+          "description": "const { login } = useContext(AuthContext);"
+        },
+        {
+          "id": "e_client_home_axios_post_login",
+          "source": "client_home",
+          "target": "client_axios",
+          "label": "sends POST /login",
+          "description": "axios.post(`${process.env.REACT_APP_API_URL}/login`, ...)"
+        },
+        {
+          "id": "e_client_auth_context_axios_get_check_auth",
+          "source": "client_auth_context",
+          "target": "client_axios",
+          "label": "sends GET /check-auth",
+          "description": "axios.get('http://localhost:5000/check-auth')"
+        },
+        {
+          "id": "e_client_auth_context_axios_post_logout",
+          "source": "client_auth_context",
+          "target": "client_axios",
+          "label": "sends POST /logout",
+          "description": "axios.post('http://localhost:5000/logout')"
+        },
+        {
+          "id": "e_client_private_route_auth_context",
+          "source": "client_private_route",
+          "target": "client_auth_context",
+          "label": "reads isAuthenticated",
+          "description": "const { isAuthenticated } = useContext(AuthContext);"
+        },
+        {
+          "id": "e_client_axios_server_main",
+          "source": "client_axios",
+          "target": "server_main",
+          "label": "makes API requests to",
+          "description": "Client-side HTTP requests via axios to the Express.js backend endpoints."
+        },
+        {
+          "id": "e_client_pt_dashboard_axios",
+          "source": "client_pt_dashboard",
+          "target": "client_axios",
+          "label": "sends data/fetches reports",
+          "description": "axios.post('/defaulters/add'), axios.get('/reports')"
+        },
+        {
+          "id": "e_client_hod_dashboard_axios",
+          "source": "client_hod_dashboard",
+          "target": "client_axios",
+          "label": "fetches reports/overview",
+          "description": "axios.get('/hod/reports'), axios.get('/hod/mentor-overview')"
+        },
+        {
+          "id": "e_client_mentor_dashboard_axios",
+          "source": "client_mentor_dashboard",
+          "target": "client_axios",
+          "label": "fetches mentees' defaulters",
+          "description": "axios.get('/mentor/my-defaulters')"
+        },
+        {
+          "id": "e_client_defaulter_report_fetch_data",
+          "source": "client_defaulter_report",
+          "target": "client_axios",
+          "label": "fetches /defaulterreport data",
+          "description": "fetch(`${process.env.REACT_APP_API_URL}/defaulterreport/...`)"
+        },
+        {
+          "id": "e_client_report_display_axios",
+          "source": "client_report_display",
+          "target": "client_axios",
+          "label": "fetches report data",
+          "description": "axios.get('/report/...')"
+        },
+        {
+          "id": "e_client_hod_repeated_defaulters_axios",
+          "source": "client_hod_repeated_defaulters",
+          "target": "client_axios",
+          "label": "fetches repeated defaulters",
+          "description": "axios.get('/hodRepeatedDefaulters/...')"
+        },
+        {
+          "id": "e_client_mentor_repeated_defaulters_axios",
+          "source": "client_mentor_repeated_defaulters",
+          "target": "client_axios",
+          "label": "fetches repeated defaulters",
+          "description": "axios.get('/mentorRepeatedDefaulters/...')"
+        },
+        {
+          "id": "e_client_defaulter_report_exceljs",
+          "source": "client_defaulter_report",
+          "target": "client_exceljs",
+          "label": "uses to create Excel",
+          "description": "new ExcelJS.Workbook()"
+        },
+        {
+          "id": "e_client_defaulter_report_file_saver",
+          "source": "client_defaulter_report",
+          "target": "client_file_saver",
+          "label": "uses to download file",
+          "description": "saveAs(blob, 'Report.xlsx')"
+        },
+        {
+          "id": "e_server_main_mongodb",
+          "source": "server_main",
+          "target": "database_mongodb",
+          "label": "performs CRUD operations",
+          "description": "Express.js controllers interact with MongoDB for data persistence and retrieval."
+        },
+        {
+          "id": "e_server_main_email_service",
+          "source": "server_main",
           "target": "email_service",
-          "label": "Triggers Email Requests",
-          "description": "The backend sends requests to the Email Notification Service to initiate email sending for reports or alerts."
+          "label": "sends POST to /send-email",
+          "description": "Main backend calls a /send-email endpoint on the email service for notifications."
+        },
+        {
+          "id": "e_email_service_nodemailer",
+          "source": "email_service",
+          "target": "email_nodemailer",
+          "label": "uses to send emails",
+          "description": "Nodemailer is used internally by the email service to compose and send emails."
+        },
+        {
+          "id": "e_actor_pe_client_home",
+          "source": "actor_pe",
+          "target": "client_home",
+          "label": "logs in via",
+          "description": "PE user authenticates through the Home component."
+        },
+        {
+          "id": "e_actor_mentor_client_home",
+          "source": "actor_mentor",
+          "target": "client_home",
+          "label": "logs in via",
+          "description": "Mentor user authenticates through the Home component."
+        },
+        {
+          "id": "e_actor_hod_client_home",
+          "source": "actor_hod",
+          "target": "client_home",
+          "label": "logs in via",
+          "description": "HOD user authenticates through the Home component."
         }
       ]
     },
     "api_flow": {
       "title": "Defaulter Tracking System API Flow",
-      "description": "This API flow diagram illustrates the journey of a client request to a final response in the Defaulter Tracking System application.",
+      "description": "Overview of all API endpoints and middleware",
       "nodes": [
         {
           "id": "node_1",
           "type": "endpoint",
-          "label": "Client Request",
-          "description": "The client sends a request to the server",
-          "method": "",
-          "path": "",
+          "label": "POST /api/users \u2014 Register User",
+          "description": "Create a new user",
+          "method": "POST",
+          "path": "/api/users",
+          "file_path": "server/routes/users.js",
           "position": {
-            "x": 100,
-            "y": 100
+            "x": 150,
+            "y": 120
           }
         },
         {
           "id": "node_2",
           "type": "middleware",
-          "label": "Authentication Middleware",
-          "description": "Verify client credentials and authenticate the request",
+          "label": "authMiddleware.js \u2014 Verify JWT Token",
+          "description": "Verify JWT token for authentication",
           "method": "",
           "path": "",
+          "file_path": "server/middleware/authMiddleware.js",
           "position": {
-            "x": 300,
-            "y": 100
+            "x": 430,
+            "y": 120
           }
         },
         {
           "id": "node_3",
           "type": "endpoint",
-          "label": "GET /api/defaulter",
-          "description": "Retrieve defaulter data from the database",
+          "label": "GET /api/users \u2014 Get All Users",
+          "description": "Retrieve all users",
           "method": "GET",
-          "path": "/api/defaulter",
+          "path": "/api/users",
+          "file_path": "server/routes/users.js",
           "position": {
-            "x": 500,
-            "y": 100
+            "x": 710,
+            "y": 120
           }
         },
         {
           "id": "node_4",
           "type": "endpoint",
-          "label": "POST /api/defaulter",
-          "description": "Create new defaulter data in the database",
+          "label": "POST /api/defaulters \u2014 Create Defaulter",
+          "description": "Create a new defaulter",
           "method": "POST",
-          "path": "/api/defaulter",
+          "path": "/api/defaulters",
+          "file_path": "server/routes/defaulters.js",
           "position": {
-            "x": 700,
-            "y": 100
+            "x": 150,
+            "y": 300
           }
         },
         {
           "id": "node_5",
-          "type": "endpoint",
-          "label": "GET /api/report",
-          "description": "Generate report data from the database",
-          "method": "GET",
-          "path": "/api/report",
+          "type": "middleware",
+          "label": "defaulterMiddleware.js \u2014 Validate Defaulter Data",
+          "description": "Validate defaulter data",
+          "method": "",
+          "path": "",
+          "file_path": "server/middleware/defaulterMiddleware.js",
           "position": {
-            "x": 900,
-            "y": 100
+            "x": 430,
+            "y": 300
           }
         },
         {
           "id": "node_6",
           "type": "endpoint",
-          "label": "Error Handling",
-          "description": "Handle errors and exceptions",
-          "method": "",
-          "path": "",
+          "label": "GET /api/defaulters \u2014 Get All Defaulters",
+          "description": "Retrieve all defaulters",
+          "method": "GET",
+          "path": "/api/defaulters",
+          "file_path": "server/routes/defaulters.js",
           "position": {
-            "x": 1100,
-            "y": 100
+            "x": 710,
+            "y": 300
           }
         },
         {
           "id": "node_7",
           "type": "endpoint",
-          "label": "Response",
-          "description": "Send response back to the client",
+          "label": "GET /api/reports \u2014 Generate Report",
+          "description": "Generate report by defaulter type or date range",
+          "method": "GET",
+          "path": "/api/reports",
+          "file_path": "server/routes/reports.js",
+          "position": {
+            "x": 150,
+            "y": 480
+          }
+        },
+        {
+          "id": "node_8",
+          "type": "middleware",
+          "label": "reportMiddleware.js \u2014 Validate Report Parameters",
+          "description": "Validate report parameters",
           "method": "",
           "path": "",
+          "file_path": "server/middleware/reportMiddleware.js",
           "position": {
-            "x": 1300,
-            "y": 100
+            "x": 430,
+            "y": 480
+          }
+        },
+        {
+          "id": "node_9",
+          "type": "endpoint",
+          "label": "GET /api/mentors \u2014 Get Mentor Overview",
+          "description": "Retrieve mentor overview",
+          "method": "GET",
+          "path": "/api/mentors",
+          "file_path": "server/routes/mentors.js",
+          "position": {
+            "x": 710,
+            "y": 480
+          }
+        },
+        {
+          "id": "node_10",
+          "type": "database",
+          "label": "MongoDB \u2014 Defaulter Database",
+          "description": "Defaulter database",
+          "method": "",
+          "path": "",
+          "file_path": "",
+          "position": {
+            "x": 990,
+            "y": 300
           }
         }
       ],
@@ -197,188 +641,255 @@
           "id": "edge_1",
           "source": "node_1",
           "target": "node_2",
-          "label": "sends request",
-          "description": "Client sends request to server"
+          "label": "passes to",
+          "description": "User registration data"
         },
         {
           "id": "edge_2",
           "source": "node_2",
           "target": "node_3",
-          "label": "authenticates",
-          "description": "Authentication middleware authenticates the request"
+          "label": "passes to",
+          "description": "Authenticated user data"
         },
         {
           "id": "edge_3",
-          "source": "node_3",
-          "target": "node_4",
-          "label": "sends data",
-          "description": "Retrieve defaulter data from the database"
+          "source": "node_4",
+          "target": "node_5",
+          "label": "passes to",
+          "description": "Defaulter data"
         },
         {
           "id": "edge_4",
-          "source": "node_4",
-          "target": "node_5",
-          "label": "creates data",
-          "description": "Create new defaulter data in the database"
+          "source": "node_5",
+          "target": "node_6",
+          "label": "passes to",
+          "description": "Validated defaulter data"
         },
         {
           "id": "edge_5",
-          "source": "node_5",
-          "target": "node_6",
-          "label": "generates report",
-          "description": "Generate report data from the database"
+          "source": "node_7",
+          "target": "node_8",
+          "label": "passes to",
+          "description": "Report parameters"
         },
         {
           "id": "edge_6",
+          "source": "node_8",
+          "target": "node_9",
+          "label": "passes to",
+          "description": "Validated report parameters"
+        },
+        {
+          "id": "edge_7",
           "source": "node_6",
-          "target": "node_7",
-          "label": "sends response",
-          "description": "Send response back to the client"
+          "target": "node_10",
+          "label": "passes to",
+          "description": "Defaulter data for storage"
+        },
+        {
+          "id": "edge_8",
+          "source": "node_9",
+          "target": "node_10",
+          "label": "passes to",
+          "description": "Mentor overview data for storage"
         }
       ]
     },
     "data_flow": {
       "title": "Defaulter Tracking System Data Flow",
-      "description": "This system tracks defaulters in an institute, built using the MERN Stack (MongoDB, Express, React, Node.js).",
+      "description": "Overview of all data models and transformations in the Defaulter Tracking System",
       "nodes": [
         {
-          "id": "node_1",
-          "type": "input",
-          "label": "User Input",
-          "description": "User enters defaulter data (Roll No., Type - e.g., latecomer, dress code).",
-          "data_type": "input",
+          "id": "user_model",
+          "type": "data",
+          "label": "User.model.js \u2014 id, email, password, bio",
+          "description": "Represents a user in the system",
+          "data_type": "model",
+          "file_path": "server/models/User.model.js",
           "position": {
-            "x": 100,
-            "y": 100
-          }
-        },
-        {
-          "id": "node_2",
-          "type": "transform",
-          "label": "Data Validation",
-          "description": "Data is validated to prevent duplicate entries for the same day and same type.",
-          "data_type": "transform",
-          "position": {
-            "x": 300,
-            "y": 100
-          }
-        },
-        {
-          "id": "node_3",
-          "type": "storage",
-          "label": "MongoDB Database",
-          "description": "Defaulter data is stored in the MongoDB database.",
-          "data_type": "storage",
-          "position": {
-            "x": 500,
-            "y": 100
-          }
-        },
-        {
-          "id": "node_4",
-          "type": "transform",
-          "label": "Report Generation",
-          "description": "Reports are generated based on defaulter type, from date, and to date.",
-          "data_type": "transform",
-          "position": {
-            "x": 700,
-            "y": 100
-          }
-        },
-        {
-          "id": "node_5",
-          "type": "output",
-          "label": "Report Display",
-          "description": "Reports are displayed to the user.",
-          "data_type": "output",
-          "position": {
-            "x": 900,
-            "y": 100
-          }
-        },
-        {
-          "id": "node_6",
-          "type": "storage",
-          "label": "Mentor Overview",
-          "description": "Mentor overview data is stored in the MongoDB database.",
-          "data_type": "storage",
-          "position": {
-            "x": 500,
+            "x": 1830,
             "y": 300
           }
         },
         {
-          "id": "node_7",
-          "type": "transform",
-          "label": "Repeated Defaulter Detection",
-          "description": "Repeated defaulters are detected and stored in the MongoDB database.",
-          "data_type": "transform",
+          "id": "defaulter_model",
+          "type": "data",
+          "label": "Defaulter.model.js \u2014 id, userId, type, date",
+          "description": "Represents a defaulter in the system",
+          "data_type": "model",
+          "file_path": "server/models/Defaulter.model.js",
           "position": {
-            "x": 700,
+            "x": 2670,
             "y": 300
           }
         },
         {
-          "id": "node_8",
-          "type": "output",
-          "label": "Mentor Report",
-          "description": "Mentor reports are displayed to the user.",
-          "data_type": "output",
+          "id": "mentor_model",
+          "type": "data",
+          "label": "Mentor.model.js \u2014 id, name, email",
+          "description": "Represents a mentor in the system",
+          "data_type": "model",
+          "file_path": "server/models/Mentor.model.js",
           "position": {
-            "x": 900,
+            "x": 150,
+            "y": 210
+          }
+        },
+        {
+          "id": "hod_model",
+          "type": "data",
+          "label": "Hod.model.js \u2014 id, name, email",
+          "description": "Represents a HOD in the system",
+          "data_type": "model",
+          "file_path": "server/models/Hod.model.js",
+          "position": {
+            "x": 150,
+            "y": 390
+          }
+        },
+        {
+          "id": "request_body_validation",
+          "type": "transform",
+          "label": "Request Body Validation \u2014 validate user input",
+          "description": "Validates user input data",
+          "data_type": "transform",
+          "file_path": "server/controllers/UserController.js",
+          "position": {
+            "x": 2110,
+            "y": 300
+          }
+        },
+        {
+          "id": "database_write",
+          "type": "storage",
+          "label": "Database Write \u2014 save data to MongoDB",
+          "description": "Saves data to the MongoDB database",
+          "data_type": "storage",
+          "file_path": "server/models/User.model.js",
+          "position": {
+            "x": 2390,
+            "y": 300
+          }
+        },
+        {
+          "id": "database_read",
+          "type": "storage",
+          "label": "Database Read \u2014 retrieve data from MongoDB",
+          "description": "Retrieves data from the MongoDB database",
+          "data_type": "storage",
+          "file_path": "server/models/Defaulter.model.js",
+          "position": {
+            "x": 710,
+            "y": 300
+          }
+        },
+        {
+          "id": "response_serialization",
+          "type": "transform",
+          "label": "Response Serialization \u2014 serialize data for response",
+          "description": "Serializes data for response",
+          "data_type": "transform",
+          "file_path": "server/controllers/DefaulterController.js",
+          "position": {
+            "x": 990,
+            "y": 300
+          }
+        },
+        {
+          "id": "jwt_token_generation",
+          "type": "transform",
+          "label": "JWT Token Generation \u2014 generate JWT token",
+          "description": "Generates a JWT token",
+          "data_type": "transform",
+          "file_path": "server/controllers/AuthController.js",
+          "position": {
+            "x": 1270,
+            "y": 300
+          }
+        },
+        {
+          "id": "jwt_token_verification",
+          "type": "transform",
+          "label": "JWT Token Verification \u2014 verify JWT token",
+          "description": "Verifies a JWT token",
+          "data_type": "transform",
+          "file_path": "server/controllers/AuthController.js",
+          "position": {
+            "x": 1550,
             "y": 300
           }
         }
       ],
       "edges": [
         {
-          "id": "edge_1",
-          "source": "node_1",
-          "target": "node_2",
-          "label": "transforms to",
-          "description": "Data is validated before being stored in the database."
+          "id": "user_model_to_request_body_validation",
+          "source": "user_model",
+          "target": "request_body_validation",
+          "label": "User input data",
+          "description": "User input data is validated"
         },
         {
-          "id": "edge_2",
-          "source": "node_2",
-          "target": "node_3",
-          "label": "stored in",
-          "description": "Defaulter data is stored in the MongoDB database."
+          "id": "request_body_validation_to_database_write",
+          "source": "request_body_validation",
+          "target": "database_write",
+          "label": "Validated data",
+          "description": "Validated data is saved to the database"
         },
         {
-          "id": "edge_3",
-          "source": "node_3",
-          "target": "node_4",
-          "label": "transforms to",
-          "description": "Reports are generated based on defaulter type, from date, and to date."
+          "id": "database_write_to_defaulter_model",
+          "source": "database_write",
+          "target": "defaulter_model",
+          "label": "Defaulter data",
+          "description": "Defaulter data is saved to the database"
         },
         {
-          "id": "edge_4",
-          "source": "node_4",
-          "target": "node_5",
-          "label": "displays",
-          "description": "Reports are displayed to the user."
+          "id": "defaulter_model_to_database_read",
+          "source": "defaulter_model",
+          "target": "database_read",
+          "label": "Defaulter data",
+          "description": "Defaulter data is retrieved from the database"
         },
         {
-          "id": "edge_5",
-          "source": "node_3",
-          "target": "node_6",
-          "label": "stored in",
-          "description": "Mentor overview data is stored in the MongoDB database."
+          "id": "database_read_to_response_serialization",
+          "source": "database_read",
+          "target": "response_serialization",
+          "label": "Defaulter data",
+          "description": "Defaulter data is serialized for response"
         },
         {
-          "id": "edge_6",
-          "source": "node_6",
-          "target": "node_7",
-          "label": "transforms to",
-          "description": "Repeated defaulters are detected and stored in the MongoDB database."
+          "id": "response_serialization_to_jwt_token_generation",
+          "source": "response_serialization",
+          "target": "jwt_token_generation",
+          "label": "Serialized data",
+          "description": "Serialized data is used to generate a JWT token"
         },
         {
-          "id": "edge_7",
-          "source": "node_7",
-          "target": "node_8",
-          "label": "displays",
-          "description": "Mentor reports are displayed to the user."
+          "id": "jwt_token_generation_to_jwt_token_verification",
+          "source": "jwt_token_generation",
+          "target": "jwt_token_verification",
+          "label": "JWT token",
+          "description": "JWT token is verified"
+        },
+        {
+          "id": "jwt_token_verification_to_user_model",
+          "source": "jwt_token_verification",
+          "target": "user_model",
+          "label": "Verified user",
+          "description": "Verified user data is retrieved"
+        },
+        {
+          "id": "mentor_model_to_defaulter_model",
+          "source": "mentor_model",
+          "target": "defaulter_model",
+          "label": "Mentor-defaulter relationship",
+          "description": "A mentor is related to multiple defaulters"
+        },
+        {
+          "id": "hod_model_to_defaulter_model",
+          "source": "hod_model",
+          "target": "defaulter_model",
+          "label": "HOD-defaulter relationship",
+          "description": "A HOD is related to multiple defaulters"
         }
       ]
     }

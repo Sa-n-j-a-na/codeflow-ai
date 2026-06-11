@@ -1,121 +1,154 @@
 import { Handle, Position } from "reactflow"
 
-// Color per node type
 const TYPE_COLORS = {
-  component: "#6366f1",
-  endpoint:  "#10b981",
-  data:      "#f59e0b",
-  service:   "#3b82f6",
-  database:  "#ef4444",
-  default:   "#6366f1"
+  component:        "#6366f1",
+  service:          "#3b82f6",
+  database:         "#ef4444",
+  storage:          "#ef4444",
+  external:         "#8b5cf6",
+  external_service: "#8b5cf6",
+  endpoint:         "#10b981",
+  module:           "#06b6d4",
+  middleware:       "#f59e0b",
+  cache:            "#f59e0b",
+  queue:            "#ec4899",
+  input:            "#10b981",
+  output:           "#6366f1",
+  transform:        "#06b6d4",
+  actor:            "#64748b",
+  datastore:        "#ef4444",
+  default:          "#6366f1"
 }
 
-export default function NodeCard({ data }) {
+const TYPE_SHAPES = {
+  database:  "cylinder",
+  storage:   "cylinder",
+  datastore: "cylinder",
+  actor:     "circle",
+  default:   "rect"
+}
+
+export default function NodeCard({ data, selected }) {
   const color = TYPE_COLORS[data.type] || TYPE_COLORS.default
+  const shape = TYPE_SHAPES[data.type] || TYPE_SHAPES.default
+
+  const baseStyle = {
+    background: `${color}15`,
+    border: `2px solid ${color}`,
+    fontFamily: "Inter, sans-serif",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    boxShadow: selected
+      ? `0 0 0 3px ${color}55, 0 8px 24px ${color}33`
+      : `0 2px 12px ${color}22`,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "14px 16px",
+    minWidth: "120px",
+    maxWidth: "150px",
+    textAlign: "center",
+    position: "relative"
+  }
+
+  const shapeStyle = shape === "cylinder" ? {
+    ...baseStyle,
+    borderRadius: "8px",
+    borderTop: `4px solid ${color}`,
+    borderBottom: `4px solid ${color}`,
+  } : shape === "circle" ? {
+    ...baseStyle,
+    borderRadius: "50%",
+    width: "100px",
+    height: "100px",
+    minWidth: "100px",
+    padding: "8px"
+  } : {
+    ...baseStyle,
+    borderRadius: "12px"
+  }
 
   return (
-    <div style={{
-      background: "#1a1a2e",
-      border: `2px solid ${color}`,
-      borderRadius: "12px",
-      padding: "14px 16px",
-      minWidth: "200px",
-      maxWidth: "240px",
-      boxShadow: `0 0 16px ${color}33`,
-      position: "relative"
-    }}>
-      {/* Top connection handle */}
+    <div style={shapeStyle}>
       <Handle
         type="target"
-        position={Position.Top}
-        style={{ background: color, width: 8, height: 8 }}
+        position={Position.Left}
+        style={{
+          background: color,
+          width: 8, height: 8,
+          border: "2px solid #0d0d1a"
+        }}
       />
 
-      {/* Type badge */}
+      {/* Short label only — no description */}
       <div style={{
-        fontSize: "9px",
-        color: color,
-        textTransform: "uppercase",
-        letterSpacing: "1px",
-        marginBottom: "6px",
-        fontWeight: "bold"
-      }}>
-        {data.type || "component"}
-      </div>
-
-      {/* Label */}
-      <div style={{
-        color: "white",
-        fontWeight: "bold",
-        fontSize: "13px",
-        marginBottom: "6px",
-        lineHeight: "1.3"
+        color: "#ffffff",
+        fontWeight: "700",
+        fontSize: "12px",
+        lineHeight: "1.3",
+        marginBottom: data.technology ? "6px" : "0"
       }}>
         {data.label}
       </div>
 
-      {/* Description */}
-      {data.description && (
+      {/* One tech tag max */}
+      {data.technology && (
         <div style={{
-          color: "#9090b0",
-          fontSize: "11px",
-          lineHeight: "1.5",
-          marginBottom: data.technology ? "8px" : "0"
+          background: `${color}25`,
+          color: color,
+          fontSize: "9px",
+          padding: "2px 7px",
+          borderRadius: "20px",
+          fontWeight: "600",
+          maxWidth: "130px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap"
         }}>
-          {data.description}
+          {data.technology.split(",")[0].trim()}
         </div>
       )}
 
-      {/* Technology tag */}
-      {data.technology && (
-        <span style={{
-          display: "inline-block",
-          background: `${color}22`,
-          color: color,
-          fontSize: "10px",
-          padding: "2px 8px",
-          borderRadius: "20px",
-          marginTop: "4px"
-        }}>
-          {data.technology}
-        </span>
-      )}
-
-      {/* Method + path for API nodes */}
+      {/* Method badge for API nodes */}
       {data.method && (
         <div style={{
-          marginTop: "6px",
-          display: "flex",
-          gap: "4px",
-          alignItems: "center"
+          background: color,
+          color: "white",
+          fontSize: "9px",
+          padding: "2px 7px",
+          borderRadius: "4px",
+          fontWeight: "700",
+          marginTop: "4px"
         }}>
-          <span style={{
-            background: color,
-            color: "white",
-            fontSize: "9px",
-            padding: "2px 6px",
-            borderRadius: "4px",
-            fontWeight: "bold"
-          }}>
-            {data.method}
-          </span>
-          {data.path && (
-            <span style={{
-              color: "#6b6b8a",
-              fontSize: "10px",
-              fontFamily: "monospace"
-            }}>
-              {data.path}
-            </span>
-          )}
+          {data.method}
         </div>
       )}
 
-      {/* Bottom connection handle */}
+      {/* File path — shows actual file */}
+      {data.file_path && (
+        <div style={{
+          color: "#3d3d6d",
+          fontSize: "8px",
+          fontFamily: "monospace",
+          marginTop: "4px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          maxWidth: "130px"
+        }}>
+          {data.file_path}
+        </div>
+      )}
+
       <Handle
         type="source"
-        position={Position.Bottom}
-        style={{ background: color, width: 8, height: 8 }}
+        position={Position.Right}
+        style={{
+          background: color,
+          width: 8, height: 8,
+          border: "2px solid #0d0d1a"
+        }}
       />
     </div>
   )
