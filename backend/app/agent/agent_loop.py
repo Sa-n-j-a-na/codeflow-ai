@@ -1,4 +1,5 @@
 import time
+import json
 from app.agent.tools.file_reader import read_codebase
 from app.agent.tools.code_parser import parse_structure
 from app.agent.tools.flow_builder import parse_ai_response, auto_layout
@@ -11,45 +12,84 @@ from app.agent.architecture_store import (
     save_diagram
 )
 from app.agent.diff_engine import compare_flows
+from app.agent.tools.architecture_extractor import extract_architecture
 
 
-def build_groq_prompt(prompt_template, structure, content):
-    instructions = prompt_template[:3_000]
-    context = f"""
-CODEBASE STRUCTURE:
-{structure}
+# backend/app/agent/agent_loop.py
 
-CODE SAMPLE:
-{content[:8_000]}
+def build_groq_prompt(
+    prompt_template,
+    structure,
+    architecture_context
+):
+    return f"""
+ARCHITECTURE SUMMARY
 
-[Codebase trimmed — use structure for complete picture]
+{json.dumps(architecture_context, indent=2)}
+
+CODEBASE STRUCTURE
+
+{structure[:12000]}
+
+Return valid JSON only.
 """
-    return instructions + "\n\n" + context
 
 
-def run_single_flow(prompt_template, structure, content, flow_type, is_first):
-    if is_first:
-        print(f"  [{flow_type}] Using Gemini...")
-        prompt = prompt_template.replace("{structure}", structure)
-        prompt = prompt.replace("{content}", content)
-        raw = call_gemini(prompt)
-        if not raw:
-            print(f"  Gemini failed, using Groq...")
-            raw = call_ai_groq_only(
-                build_groq_prompt(prompt_template, structure, content)
-            )
-    else:
-        print(f"  [{flow_type}] Using Groq...")
+def run_single_flow(
+    prompt_template,
+    structure,
+    content,
+    flow_type,
+    is_first,
+    architecture_context
+):
+    print(f"  [{flow_type}] Using Gemini...")
+
+    prompt = prompt_template
+
+    prompt = prompt.replace(
+        "{architecture_context}",
+        json.dumps(
+            architecture_context,
+            indent=2
+        )
+    )
+
+    prompt = prompt.replace(
+        "{structure}",
+        structure
+    )
+
+    prompt = prompt.replace(
+        "{content}",
+        content
+    )
+
+    raw = call_gemini(prompt)
+
+    if not raw:
+        print(f"  Gemini failed, using Groq (trimmed)...")
+
+        groq_prompt = build_groq_prompt(
+            prompt_template,
+            structure,
+            architecture_context
+        )
+
         raw = call_ai_groq_only(
-            build_groq_prompt(prompt_template, structure, content)
+            groq_prompt
         )
 
     if not raw:
-        return {"error": f"All AI models failed for {flow_type}"}
+        return {
+            "error": f"All AI models failed for {flow_type}"
+        }
 
     flow_data = parse_ai_response(raw)
+
     if "error" not in flow_data:
         flow_data = auto_layout(flow_data)
+
     return flow_data
 
 
@@ -91,6 +131,17 @@ def run_agent(codebase_path: str, flow_type: str = "all", source_url: str = None
 
     print("\n[2/4] Parsing structure...")
     structure = parse_structure(codebase_path)
+    print("\n[2.5/4] Discovering architecture...")
+
+    architecture_context = extract_architecture(
+        structure,
+        codebase_data["content"]
+    )
+
+    print(
+        f"Architecture detected: "
+        f"{architecture_context.get('project_type','Unknown')}"
+    )
 
     print("\n[3/4] Generating flows...")
     results = {}
@@ -99,14 +150,14 @@ def run_agent(codebase_path: str, flow_type: str = "all", source_url: str = None
         print(f"\n  → {ft} ({i+1}/3)...")
         results[ft] = run_single_flow(
             prompt_template, structure,
-            codebase_data["content"], ft, is_first=(i == 0)
+            codebase_data["content"], ft, is_first=(i == 0), architecture_context=architecture_context  
         )
         if i < len(flow_list) - 1:
-            time.sleep(3)
+            time.sleep(3)   
 
     print("\n[4/4] Comparing and saving...")
     diff = compare_flows(saved, results)
-    save_diagram(project_source, results, diff)
+    save_diagram(project_source, results, architecture_context, diff)
 
     for ft, data in results.items():
         if "error" in data:

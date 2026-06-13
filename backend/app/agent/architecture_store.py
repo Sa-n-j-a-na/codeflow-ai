@@ -9,7 +9,8 @@ STORE_DIR = os.path.join(
             os.path.dirname(__file__)
         )
     ),
-    "data", "architectures"
+    "data",
+    "architectures"
 )
 
 
@@ -27,43 +28,101 @@ def get_filepath(source: str) -> str:
 
 
 def has_saved_diagram(source: str) -> bool:
-    """Check if we already have a saved diagram for this project."""
     return os.path.exists(get_filepath(source))
 
 
 def load_saved_diagram(source: str) -> dict:
-    """Load the saved canonical diagram. Returns None if not found."""
     filepath = get_filepath(source)
+
     if not os.path.exists(filepath):
         return None
+
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
-    print(f"  Loaded saved diagram v{data.get('version', 1)}")
+
+    print(
+        f"  Loaded saved diagram "
+        f"v{data.get('version', 1)}"
+    )
+
     return data
 
 
-def save_diagram(source: str, flows: dict, diff: dict = None) -> dict:
-    """
-    Save the canonical diagram.
-    First save = version 1
-    Updates = increment version + store diff
-    """
+def load_architecture_context(source: str) -> dict:
+    data = load_saved_diagram(source)
+
+    if not data:
+        return {}
+
+    return data.get(
+        "architecture_context",
+        {}
+    )
+
+
+def save_diagram(
+    source: str,
+    flows: dict,
+    architecture_context: dict = None,
+    diff: dict = None
+):
     filepath = get_filepath(source)
+
     existing = load_saved_diagram(source)
 
-    version = 1 if not existing else existing.get("version", 1) + 1
-    created_at = existing.get("created_at") if existing else datetime.now().isoformat()
+    version = (
+        1
+        if not existing
+        else existing.get("version", 1) + 1
+    )
 
-    # Build diff history
-    diff_history = existing.get("diff_history", []) if existing else []
+    created_at = (
+        existing.get("created_at")
+        if existing
+        else datetime.now().isoformat()
+    )
+
+    diff_history = (
+        existing.get("diff_history", [])
+        if existing
+        else []
+    )
+
     if diff and diff.get("has_changes"):
         diff_history.append({
             "version": version,
             "date": datetime.now().isoformat(),
             "changes": {
-                "added": [n["label"] for n in diff.get("nodes", {}).get("added", [])],
-                "removed": [n["label"] for n in diff.get("nodes", {}).get("removed", [])],
-                "changed": [n["label"] for n in diff.get("nodes", {}).get("changed", [])]
+                "added": [
+                    n["label"]
+                    for n in diff.get(
+                        "nodes",
+                        {}
+                    ).get(
+                        "added",
+                        []
+                    )
+                ],
+                "removed": [
+                    n["label"]
+                    for n in diff.get(
+                        "nodes",
+                        {}
+                    ).get(
+                        "removed",
+                        []
+                    )
+                ],
+                "changed": [
+                    n["label"]
+                    for n in diff.get(
+                        "nodes",
+                        {}
+                    ).get(
+                        "changed",
+                        []
+                    )
+                ]
             }
         })
 
@@ -73,6 +132,7 @@ def save_diagram(source: str, flows: dict, diff: dict = None) -> dict:
         "created_at": created_at,
         "last_updated": datetime.now().isoformat(),
         "version": version,
+        "architecture_context": architecture_context or {},
         "flows": {
             k: {
                 "title": v.get("title"),
@@ -87,7 +147,15 @@ def save_diagram(source: str, flows: dict, diff: dict = None) -> dict:
     }
 
     with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(saved, f, indent=2)
+        json.dump(
+            saved,
+            f,
+            indent=2
+        )
 
-    print(f"  Diagram saved → v{version}")
+    print(
+        f"  Diagram saved → "
+        f"v{version}"
+    )
+
     return saved

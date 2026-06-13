@@ -1,197 +1,644 @@
+ARCHITECTURE_DISCOVERY_PROMPT = """
+You are a Principal Software Architect.
+
+Your task is NOT to generate diagrams.
+
+Your task is to understand the codebase.
+
+Analyze:
+
+1. What business problem this software solves
+2. Major features
+3. Major workflows
+4. Major services
+5. Data entities
+6. External systems
+7. Entry points
+8. User journeys
+
+IMPORTANT:
+
+Do NOT use filenames as features.
+
+Think like an architect.
+
+BAD:
+
+Feature:
+auth.py
+
+GOOD:
+
+Feature:
+User Authentication
+
+Return ONLY valid JSON.
+
+{
+  "project_type": "",
+  "project_summary": "",
+
+  "features": [],
+
+  "user_journeys": [],
+
+  "services": [],
+
+  "data_entities": [],
+
+  "external_systems": [],
+
+  "entry_points": []
+}
+
+==================================================
+CODEBASE STRUCTURE
+==================================================
+
+{structure}
+
+==================================================
+CODEBASE FILES
+==================================================
+
+{content}
+"""
+
 SYSTEM_FLOW_PROMPT = """
-You are a senior software architect doing a DEEP code review.
-Analyze every file in this codebase and generate a DETAILED system flow.
+You are a Principal Software Architect performing a DEEP codebase analysis.
 
-YOUR JOB:
-- Map EVERY significant file to a node
-- Use ACTUAL file names and function names
-- Show REAL connections between files
-- A developer reading this flow should understand
-  the entire codebase without reading a single file
+Your task is to generate a TRUE SYSTEM FLOW DIAGRAM that explains:
 
-RULES:
-1. Every node must reference a REAL file or module from the codebase
-2. Labels must be the ACTUAL component/file name
-   BAD:  "Frontend Application"
-   GOOD: "App.jsx — Root Component"
-   GOOD: "authMiddleware.js — JWT Verify"
-   GOOD: "User.model.js — Sequelize Model"
-3. Descriptions must explain what THIS FILE does specifically
-4. Group related files:
-   - Frontend files (components, hooks, pages)
-   - Backend files (routes, controllers, middleware)
-   - Database files (models, migrations)
-   - Utility files (helpers, config)
-5. Show actual data flow:
-   BAD:  "Frontend calls Backend"
-   GOOD: "ArticleList.jsx calls GET /api/articles via api.js"
-6. Minimum 12 nodes, maximum 25 nodes
-7. Position nodes LEFT TO RIGHT by layer:
-   Layer 0: Entry points (main.jsx, app.js, index.js)
-   Layer 1: Pages / Route handlers
-   Layer 2: Components / Controllers
-   Layer 3: Services / Middleware
-   Layer 4: Models / Database
-8. Return ONLY valid JSON
+1. What the application does.
+2. How users interact with it.
+3. How requests move through the system.
+4. Which REAL files implement each capability.
 
-RETURN THIS EXACT JSON:
+==================================================
+CRITICAL OBJECTIVE
+==================================================
+
+DO NOT generate:
+
+❌ File dependency graphs
+❌ Import graphs
+❌ Folder trees
+❌ One node per file
+
+Instead generate:
+
+✅ Business workflow diagram
+✅ User journey diagram
+✅ System capability diagram
+
+Every node must represent a REAL business capability
+implemented by REAL files.
+
+==================================================
+STEP 1 — ANALYZE THE CODEBASE
+==================================================
+
+Read:
+
+- Folder structure
+- Source files
+- Imports
+- Routes
+- Controllers
+- Services
+- Models
+- Database code
+- External API integrations
+
+Determine:
+
+- Core features
+- User workflows
+- Business responsibilities
+- System boundaries
+
+==================================================
+STEP 2 — IDENTIFY BUSINESS CAPABILITIES
+==================================================
+
+Group files into meaningful capabilities.
+
+BAD:
+
+- App.jsx
+- axios.js
+- parser.py
+- auth.js
+
+GOOD:
+
+- User Authentication
+- Resume Upload
+- Resume Analysis
+- Skill Gap Detection
+- Learning Recommendation Engine
+- Interview Simulator
+- Job Matching
+- Dashboard
+
+Each capability MUST be backed by real files.
+
+==================================================
+STEP 3 — IDENTIFY USER JOURNEYS
+==================================================
+
+Determine primary application workflows.
+
+Example:
+
+User
+→ Upload Resume
+→ Resume Processing
+→ Skill Extraction
+→ Skill Gap Detection
+→ Recommendation Engine
+→ Dashboard
+
+Another example:
+
+User
+→ Start Interview
+→ Question Generation
+→ Answer Evaluation
+→ Feedback Generation
+→ Results Dashboard
+
+==================================================
+STEP 4 — BUILD SYSTEM FLOW
+==================================================
+
+Nodes represent:
+
+- Actors
+- Business capabilities
+- Services
+- Databases
+- External APIs
+- Workflows
+
+Nodes DO NOT represent individual files.
+
+Each node must contain the files that implement it.
+
+==================================================
+FILE TRACEABILITY REQUIREMENT
+==================================================
+
+Every node MUST include:
+
+"files": [
+  "actual/file/path.py",
+  "actual/file/path.js"
+]
+
+Only use files that actually exist.
+
+Never invent filenames.
+
+==================================================
+EXTERNAL SERVICES
+==================================================
+
+Detect and include:
+
+- OpenAI
+- Gemini
+- Claude
+- AWS
+- Azure
+- Google APIs
+- Stripe
+- MongoDB
+- PostgreSQL
+- Redis
+- Elasticsearch
+- Third-party APIs
+
+when present in the code.
+
+==================================================
+NODE COUNT
+==================================================
+
+Minimum: 6
+
+Maximum: 15
+
+Prefer concise architecture over excessive detail.
+
+==================================================
+FLOW RULES
+==================================================
+
+1. Show real execution flow.
+2. Show user interactions.
+3. Show database interactions.
+4. Show external services.
+5. Show major processing steps.
+6. Group related files together.
+7. Use business terminology.
+8. Avoid technical jargon where possible.
+9. Left-to-right flow.
+10. Every node must contribute to the workflow.
+
+==================================================
+NODE TYPES
+==================================================
+
+actor
+workflow
+component
+service
+database
+external
+
+==================================================
+GOOD NODE EXAMPLE
+==================================================
+
+{
+  "id": "resume_analysis",
+
+  "type": "component",
+
+  "label": "Resume Analysis Engine",
+
+  "description": "Extracts skills, education and experience from uploaded resumes",
+
+  "files": [
+    "backend/parser/resume_parser.py",
+    "backend/services/skill_extractor.py",
+    "backend/utils/resume_utils.py"
+  ],
+
+  "position": {
+    "x": 500,
+    "y": 300
+  }
+}
+
+==================================================
+EDGE RULES
+==================================================
+
+Edges represent:
+
+- User actions
+- Data movement
+- Service invocation
+- Database access
+- External API calls
+
+Example:
+
+{
+  "id": "e1",
+
+  "source": "resume_upload",
+
+  "target": "resume_analysis",
+
+  "label": "Uploaded Resume",
+
+  "description": "Resume submitted for analysis"
+}
+
+==================================================
+RETURN ONLY VALID JSON
+==================================================
+
 {
   "flow_type": "system_flow",
-  "title": "Actual project name from package.json",
-  "description": "2-3 sentences describing exactly what this codebase does",
-  "nodes": [
-    {
-      "id": "unique_id",
-      "type": "component|service|database|middleware|module|endpoint|actor",
-      "label": "filename.js — Purpose",
-      "description": "What this specific file does",
-      "technology": "actual tech used",
-      "file_path": "actual/path/to/file.js",
-      "position": {"x": 100, "y": 300}
-    }
-  ],
-  "edges": [
-    {
-      "id": "edge_1",
-      "source": "source_node_id",
-      "target": "target_node_id",
-      "label": "how they connect",
-      "description": "exact function call or import"
-    }
-  ]
+
+  "title": "Project Name",
+
+  "description": "What the system does",
+
+  "nodes": [],
+
+  "edges": []
 }
 
-CODEBASE STRUCTURE:
+==================================================
+ARCHITECTURE DISCOVERY
+==================================================
+
+The following architecture summary was generated
+from a dedicated architecture analysis phase.
+
+Use it as your PRIMARY source of truth.
+
+{architecture_context}
+
+==================================================
+
+==================================================
+CODEBASE STRUCTURE
+==================================================
+
 {structure}
 
-CODEBASE FILES:
+==================================================
+CODEBASE FILES
+==================================================
+
 {content}
 """
-
 
 API_FLOW_PROMPT = """
-You are a senior backend engineer doing a DEEP API audit.
-Analyze every route file and generate a DETAILED API flow.
+You are a Senior Backend Architect.
 
-YOUR JOB:
-- Map EVERY API endpoint to a node
-- Show the EXACT middleware chain for each request
-- Use ACTUAL file names and route paths
-- Someone reading this should know every API endpoint
-  and exactly what happens to a request
+Analyze the codebase and generate a REAL API FLOW.
 
-RULES:
-1. Every node must be a REAL route, middleware, or handler from the code
-2. Labels must include the actual HTTP method and path:
-   GOOD: "POST /api/users — Register User"
-   GOOD: "authMiddleware.js — Verify JWT Token"
-   GOOD: "usersController.js — createUser()"
-   BAD:  "Authentication"
-3. Show the COMPLETE request lifecycle:
-   Client → Router → Middleware chain → Controller → Model → DB → Response
-4. Show error handling paths — what returns 401, 404, 422
-5. Include ALL endpoints found in route files
-6. Minimum 10 nodes, maximum 25 nodes
-7. Position nodes LEFT TO RIGHT — request flows left to right
+IMPORTANT:
 
-RETURN THIS EXACT JSON:
+Do NOT generate file dependency graphs.
+
+The diagram must show:
+
+Client
+→ Endpoint
+→ Middleware
+→ Service
+→ Database
+→ Response
+
+==================================================
+RULES
+==================================================
+
+1. Primary nodes must be API endpoints.
+
+2. Group internal files into services.
+
+3. Show middleware chain.
+
+4. Show authentication flow.
+
+5. Show validation flow.
+
+6. Show database interactions.
+
+7. Show external APIs.
+
+8. Show response generation.
+
+9. Include error paths where obvious.
+
+10. Maximum 20 nodes.
+
+==================================================
+EXAMPLE
+==================================================
+
+User
+ ↓
+
+POST /resume/upload
+ ↓
+
+Resume Processing Service
+ ↓
+
+Resume Analysis Engine
+ ↓
+
+Database
+ ↓
+
+Response
+
+==================================================
+RETURN ONLY VALID JSON
+==================================================
+
 {
   "flow_type": "api_flow",
-  "title": "Project API Flow",
-  "description": "Overview of all API endpoints and middleware",
+
+  "title": "API Flow",
+
+  "description": "Request lifecycle",
+
   "nodes": [
     {
-      "id": "unique_id",
-      "type": "endpoint|middleware|service|database",
-      "label": "METHOD /path — Action",
-      "description": "What this endpoint or middleware does exactly",
-      "method": "GET|POST|PUT|DELETE|PATCH or empty",
-      "path": "/api/actual/path",
-      "file_path": "routes/actual-file.js",
-      "position": {"x": 100, "y": 300}
+      "id": "upload_endpoint",
+
+      "type": "endpoint",
+
+      "label": "POST /api/upload",
+
+      "description": "Upload resume endpoint",
+
+      "files": [
+        "routes/upload.py",
+        "controllers/upload_controller.py"
+      ],
+
+      "position": {
+        "x": 200,
+        "y": 200
+      }
     }
   ],
+
   "edges": [
     {
-      "id": "edge_1",
-      "source": "source_id",
-      "target": "target_id",
-      "label": "passes to",
-      "description": "what data passes between them"
+      "id": "e1",
+
+      "source": "upload_endpoint",
+
+      "target": "analysis_service",
+
+      "label": "Pass resume",
+
+      "description": "Resume data forwarded"
     }
   ]
 }
 
-CODEBASE STRUCTURE:
+==================================================
+ARCHITECTURE DISCOVERY
+==================================================
+
+The following architecture summary was generated
+from a dedicated architecture analysis phase.
+
+Use it as your PRIMARY source of truth.
+
+{architecture_context}
+
+==================================================
+
+==================================================
+CODEBASE STRUCTURE
+==================================================
+
 {structure}
 
-CODEBASE FILES:
+==================================================
+CODEBASE FILES
+==================================================
+
 {content}
 """
 
-
 DATA_FLOW_PROMPT = """
-You are a senior data engineer doing a DEEP data audit.
-Analyze every model, schema, and data transformation in this codebase.
+You are a Senior Data Architect.
 
-YOUR JOB:
-- Map EVERY data model and schema to a node
-- Show EXACTLY how data transforms at each step
-- Use ACTUAL model names, field names, database tables
-- Someone reading this should know every data structure
-  and how data moves through the entire system
+Analyze the codebase and generate a DATA FLOW DIAGRAM.
 
-RULES:
-1. Every node must reference REAL models or schemas from the code
-2. Labels must use actual names:
-   GOOD: "User.model.js — id, email, password, bio"
-   GOOD: "Article.model.js — slug, title, body, tagList"
-   GOOD: "JWT Token — userId, email, exp"
-   BAD:  "User Data"
-3. Show ALL data transformations:
-   - Request body validation (what fields are validated)
-   - Database reads and writes (which model, which fields)
-   - Response serialization (what gets sent back)
-4. Show relationships between models:
-   User hasMany Articles
-   Article hasMany Comments
-   User hasMany Favorites
-5. Include ALL models found in the codebase
-6. Minimum 8 nodes, maximum 20 nodes
-7. ALL nodes must be connected — no isolated subgraphs
-8. Position nodes LEFT TO RIGHT
+IMPORTANT:
 
-RETURN THIS EXACT JSON:
+Focus on DATA.
+
+Do NOT focus on files.
+
+Do NOT create nodes for source files.
+
+==================================================
+GOAL
+==================================================
+
+Explain:
+
+Where data originates.
+
+How it is transformed.
+
+Where it is stored.
+
+How it is returned.
+
+==================================================
+EXAMPLE
+==================================================
+
+Resume PDF
+ ↓
+
+Parsed Resume Data
+ ↓
+
+Extracted Skills
+ ↓
+
+Skill Gap Results
+ ↓
+
+Learning Path
+ ↓
+
+Dashboard Response
+
+==================================================
+RULES
+==================================================
+
+1. Nodes represent data structures.
+
+2. Nodes represent models.
+
+3. Nodes represent transformations.
+
+4. Show request payloads.
+
+5. Show validation.
+
+6. Show model relationships.
+
+7. Show DB writes.
+
+8. Show DB reads.
+
+9. Show response serialization.
+
+10. Keep flow understandable.
+
+11. Use 8–15 nodes.
+
+==================================================
+NODE TYPES
+==================================================
+
+input
+model
+transform
+storage
+output
+
+==================================================
+RETURN ONLY VALID JSON
+==================================================
+
 {
   "flow_type": "data_flow",
-  "title": "Project Data Flow",
-  "description": "Overview of all data models and transformations",
+
+  "title": "Data Flow",
+
+  "description": "Movement and transformation of data",
+
   "nodes": [
     {
-      "id": "unique_id",
-      "type": "input|transform|storage|output|data",
-      "label": "ModelName — key fields",
-      "description": "What data this represents and how it transforms",
-      "data_type": "input|model|transform|storage|output",
-      "file_path": "models/actual-file.js",
-      "position": {"x": 100, "y": 300}
+      "id": "resume_pdf",
+
+      "type": "input",
+
+      "label": "Resume PDF",
+
+      "description": "User uploaded resume",
+
+      "data_type": "document",
+
+      "position": {
+        "x": 100,
+        "y": 200
+      }
     }
   ],
+
   "edges": [
     {
-      "id": "edge_1",
-      "source": "source_id",
-      "target": "target_id",
-      "label": "relationship or transformation",
-      "description": "exact relationship or data change"
+      "id": "e1",
+
+      "source": "resume_pdf",
+
+      "target": "parsed_resume",
+
+      "label": "Parse",
+
+      "description": "Extract text from PDF"
     }
   ]
 }
 
-CODEBASE STRUCTURE:
+==================================================
+ARCHITECTURE DISCOVERY
+==================================================
+
+The following architecture summary was generated
+from a dedicated architecture analysis phase.
+
+Use it as your PRIMARY source of truth.
+
+{architecture_context}
+
+==================================================
+
+==================================================
+CODEBASE STRUCTURE
+==================================================
+
 {structure}
 
-CODEBASE FILES:
+==================================================
+CODEBASE FILES
+==================================================
+
 {content}
 """
 

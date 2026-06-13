@@ -18,7 +18,7 @@ IGNORE_DIRS = [
 
 # Max characters to send to AI
 # Gemini 2.5 Flash = 1M tokens ≈ 800K chars safe limit
-MAX_CHARS = 800_000
+MAX_CHARS = 150_000
 
 def read_codebase(path: str) -> dict:
     """
