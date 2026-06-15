@@ -135,7 +135,8 @@ def run_agent(codebase_path: str, flow_type: str = "all", source_url: str = None
 
     architecture_context = extract_architecture(
         structure,
-        codebase_data["content"]
+        codebase_data["content"],
+        codebase_path
     )
 
     print(
@@ -156,7 +157,11 @@ def run_agent(codebase_path: str, flow_type: str = "all", source_url: str = None
             time.sleep(3)   
 
     print("\n[4/4] Comparing and saving...")
-    diff = compare_flows(saved, results)
+    diff = compare_flows(
+        saved,
+        results,
+        architecture_context
+    )
     save_diagram(project_source, results, architecture_context, diff)
 
     for ft, data in results.items():

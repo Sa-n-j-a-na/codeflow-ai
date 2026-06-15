@@ -133,6 +133,11 @@ def save_diagram(
         "last_updated": datetime.now().isoformat(),
         "version": version,
         "architecture_context": architecture_context or {},
+        "architecture_summary": (
+            architecture_context.get("summary", {})
+            if architecture_context
+            else {}
+        ),
         "flows": {
             k: {
                 "title": v.get("title"),

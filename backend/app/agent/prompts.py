@@ -69,14 +69,10 @@ You are a Principal Software Architect performing a DEEP codebase analysis.
 
 Your task is to generate a TRUE SYSTEM FLOW DIAGRAM that explains:
 
-1. What the application does.
-2. How users interact with it.
-3. How requests move through the system.
-4. Which REAL files implement each capability.
-
-==================================================
-CRITICAL OBJECTIVE
-==================================================
+What the application does.
+How users interact with it.
+How requests move through the system.
+Which REAL files implement each capability.
 
 DO NOT generate:
 
@@ -94,58 +90,46 @@ Instead generate:
 Every node must represent a REAL business capability
 implemented by REAL files.
 
-==================================================
-STEP 1 — ANALYZE THE CODEBASE
-==================================================
-
 Read:
 
-- Folder structure
-- Source files
-- Imports
-- Routes
-- Controllers
-- Services
-- Models
-- Database code
-- External API integrations
+Folder structure
+Source files
+Imports
+Routes
+Controllers
+Services
+Models
+Database code
+External API integrations
 
 Determine:
 
-- Core features
-- User workflows
-- Business responsibilities
-- System boundaries
-
-==================================================
-STEP 2 — IDENTIFY BUSINESS CAPABILITIES
-==================================================
+Core features
+User workflows
+Business responsibilities
+System boundaries
 
 Group files into meaningful capabilities.
 
 BAD:
 
-- App.jsx
-- axios.js
-- parser.py
-- auth.js
+App.jsx
+axios.js
+parser.py
+auth.js
 
 GOOD:
 
-- User Authentication
-- Resume Upload
-- Resume Analysis
-- Skill Gap Detection
-- Learning Recommendation Engine
-- Interview Simulator
-- Job Matching
-- Dashboard
+User Authentication
+Resume Upload
+Resume Analysis
+Skill Gap Detection
+Learning Recommendation Engine
+Interview Simulator
+Job Matching
+Dashboard
 
 Each capability MUST be backed by real files.
-
-==================================================
-STEP 3 — IDENTIFY USER JOURNEYS
-==================================================
 
 Determine primary application workflows.
 
@@ -168,62 +152,127 @@ User
 → Feedback Generation
 → Results Dashboard
 
-==================================================
-STEP 4 — BUILD SYSTEM FLOW
-==================================================
-
 Nodes represent:
 
-- Actors
-- Business capabilities
-- Services
-- Databases
-- External APIs
-- Workflows
+Actors
+Business capabilities
+Services
+Databases
+External APIs
+Workflows
+
+CRITICAL:
 
 Nodes DO NOT represent individual files.
 
-Each node must contain the files that implement it.
+NEVER create nodes using filenames.
 
-==================================================
-FILE TRACEABILITY REQUIREMENT
-==================================================
+BAD:
+
+upload.py
+parser.py
+github.py
+main.py
+routes.py
+helpers.py
+
+BAD NODE EXAMPLES:
+
+{
+"label":"parser.py"
+}
+
+{
+"label":"github.py"
+}
+
+GOOD NODE EXAMPLES:
+
+{
+"label":"Repository Intake"
+}
+
+{
+"label":"Static Analysis Engine"
+}
+
+{
+"label":"Architecture Discovery"
+}
+
+{
+"label":"Flow Generation Engine"
+}
+
+{
+"label":"Architecture Store"
+}
+
+{
+"label":"Drift Detection Engine"
+}
+
+Node labels MUST describe:
+
+Business capabilities
+Processing capabilities
+Services
+Workflows
+Databases
+Actors
+External systems
+
+A filename may only appear inside the "files" field.
+
+Never use a filename as a node label.
 
 Every node MUST include:
 
-"files": [
-  "actual/file/path.py",
-  "actual/file/path.js"
+"id"
+"label"
+"type"
+"description"
+"technology"
+"files"
+
+Example:
+
+{
+"id":"architecture_engine",
+
+"label":"Architecture Discovery",
+
+"type":"service",
+
+"technology":"Gemini + AST",
+
+"description":"Discovers project architecture and system boundaries",
+
+"files":[
+"agent/tools/architecture_extractor.py"
 ]
+}
 
 Only use files that actually exist.
 
 Never invent filenames.
 
-==================================================
-EXTERNAL SERVICES
-==================================================
-
 Detect and include:
 
-- OpenAI
-- Gemini
-- Claude
-- AWS
-- Azure
-- Google APIs
-- Stripe
-- MongoDB
-- PostgreSQL
-- Redis
-- Elasticsearch
-- Third-party APIs
+OpenAI
+Gemini
+Claude
+AWS
+Azure
+Google APIs
+Stripe
+MongoDB
+PostgreSQL
+Redis
+Elasticsearch
+Third-party APIs
 
 when present in the code.
-
-==================================================
-NODE COUNT
-==================================================
 
 Minimum: 6
 
@@ -231,24 +280,16 @@ Maximum: 15
 
 Prefer concise architecture over excessive detail.
 
-==================================================
-FLOW RULES
-==================================================
-
-1. Show real execution flow.
-2. Show user interactions.
-3. Show database interactions.
-4. Show external services.
-5. Show major processing steps.
-6. Group related files together.
-7. Use business terminology.
-8. Avoid technical jargon where possible.
-9. Left-to-right flow.
-10. Every node must contribute to the workflow.
-
-==================================================
-NODE TYPES
-==================================================
+Show real execution flow.
+Show user interactions.
+Show database interactions.
+Show external services.
+Show major processing steps.
+Group related files together.
+Use business terminology.
+Avoid technical jargon where possible.
+Left-to-right flow.
+Every node must contribute to the workflow.
 
 actor
 workflow
@@ -257,76 +298,98 @@ service
 database
 external
 
-==================================================
-GOOD NODE EXAMPLE
-==================================================
-
 {
-  "id": "resume_analysis",
+"id": "resume_analysis",
 
-  "type": "component",
+"type": "component",
 
-  "label": "Resume Analysis Engine",
+"label": "Resume Analysis Engine",
 
-  "description": "Extracts skills, education and experience from uploaded resumes",
+"technology": "Python",
 
-  "files": [
-    "backend/parser/resume_parser.py",
-    "backend/services/skill_extractor.py",
-    "backend/utils/resume_utils.py"
-  ],
+"description": "Extracts skills, education and experience from uploaded resumes",
 
-  "position": {
-    "x": 500,
-    "y": 300
-  }
+"files": [
+"backend/parser/resume_parser.py",
+"backend/services/skill_extractor.py",
+"backend/utils/resume_utils.py"
+],
+
+"position": {
+"x": 500,
+"y": 300
 }
-
-==================================================
-EDGE RULES
-==================================================
+}
 
 Edges represent:
 
-- User actions
-- Data movement
-- Service invocation
-- Database access
-- External API calls
+User actions
+Data movement
+Service invocation
+Database access
+External API calls
 
 Example:
 
 {
-  "id": "e1",
+"id": "e1",
 
-  "source": "resume_upload",
+"source": "resume_upload",
 
-  "target": "resume_analysis",
+"target": "resume_analysis",
 
-  "label": "Uploaded Resume",
+"label": "Uploaded Resume",
 
-  "description": "Resume submitted for analysis"
+"description": "Resume submitted for analysis"
 }
 
-==================================================
-RETURN ONLY VALID JSON
-==================================================
+The purpose of the diagram is to explain
+HOW THE SYSTEM WORKS.
+
+Do NOT explain how files relate.
+
+Explain how capabilities relate.
+
+Prefer architecture-level nodes.
+
+GOOD:
+
+User
+Repository Intake
+Static Analysis Engine
+Architecture Discovery
+Flow Generation Engine
+Architecture Store
+Drift Detection Engine
+
+BAD:
+
+main.py
+parser.py
+routes.py
+utils.py
+helpers.py
+
+A capability node should normally contain
+1 to 10 related files.
+
+Group related files together.
+
+The diagram should be understandable
+to an engineering manager who has never
+seen the codebase before.
 
 {
-  "flow_type": "system_flow",
+"flow_type": "system_flow",
 
-  "title": "Project Name",
+"title": "Project Name",
 
-  "description": "What the system does",
+"description": "What the system does",
 
-  "nodes": [],
+"nodes": [],
 
-  "edges": []
+"edges": []
 }
-
-==================================================
-ARCHITECTURE DISCOVERY
-==================================================
 
 The following architecture summary was generated
 from a dedicated architecture analysis phase.
@@ -337,15 +400,7 @@ Use it as your PRIMARY source of truth.
 
 ==================================================
 
-==================================================
-CODEBASE STRUCTURE
-==================================================
-
 {structure}
-
-==================================================
-CODEBASE FILES
-==================================================
 
 {content}
 """

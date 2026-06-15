@@ -1,0 +1,1122 @@
+{
+  "project_id": "github_com_alfredlim16_restaurant_management_system",
+  "source": "https://github.com/alfredlim16/restaurant-management-system",
+  "created_at": "2026-06-15T08:13:47.578347",
+  "last_updated": "2026-06-15T08:13:47.578379",
+  "version": 1,
+  "architecture_context": {
+    "project_type": "Restaurant Management System (Desktop Application)",
+    "project_summary": "The Restaurant Management System is a desktop application designed to streamline restaurant operations. It provides functionalities for managing customer orders, processing various types of payments, tracking inventory, recording food waste, and generating comprehensive reports. The system supports role-based access for cashiers and managers, each having distinct functionalities within the application.",
+    "features": [
+      "User Authentication and Authorization",
+      "Role-Based Access Control (Cashier, Manager)",
+      "Order Creation and Management",
+      "Order Status Tracking (Preparing, Ready, Served, Completed, Cancelled)",
+      "Payment Processing (Cash, Card, Digital Wallets)",
+      "Payment Transaction History and Refunds",
+      "Menu Item Management (CRUD, Availability)",
+      "Inventory Tracking and Management",
+      "Recipe/Ingredient Management (linking menu items to raw ingredients)",
+      "Food Waste Recording and Tracking",
+      "Operational and Financial Reporting (Sales, Revenue, Tips, Inventory, Food Waste)",
+      "User Account Management",
+      "Restaurant Management Dashboard"
+    ],
+    "user_journeys": [
+      {
+        "role": "Cashier",
+        "journey_name": "Process Customer Order and Payment",
+        "steps": [
+          "Launches the application.",
+          "Logs in with Cashier credentials.",
+          "Navigates to the 'Orders' section.",
+          "Creates a new order by selecting a table and adding menu items with quantities.",
+          "Receives confirmation of order placement, with status 'Preparing'.",
+          "Monitors order status updates (e.g., 'Ready', 'Served').",
+          "Selects a 'Served' order from the list to process payment.",
+          "Enters tip amount and selects a payment method (Cash, Card, GCash, Maya).",
+          "Processes the payment, which updates order status to 'Completed'.",
+          "Can view past orders and their details.",
+          "Logs out."
+        ]
+      },
+      {
+        "role": "Manager",
+        "journey_name": "Manage Restaurant Operations and Generate Reports",
+        "steps": [
+          "Launches the application.",
+          "Logs in with Manager credentials.",
+          "Views the Manager Dashboard for an overview of daily operations.",
+          "Navigates to 'Menu Item Management' to add new dishes, update prices, or change availability.",
+          "Navigates to 'Inventory Management' to update stock levels for ingredients or add new items.",
+          "Configures ingredients required for each menu item through 'Recipe/Ingredient Management'.",
+          "Navigates to 'Food Waste Tracking' to record wasted ingredients or dishes.",
+          "Navigates to 'Reports' to generate daily sales, total revenue, tips, inventory, and food waste reports for analysis.",
+          "Navigates to 'User Management' to create new cashier accounts or modify existing user roles.",
+          "Logs out."
+        ]
+      }
+    ],
+    "services": [
+      "Authentication Service",
+      "Order Management Service",
+      "Payment Processing Service",
+      "Menu Item Service",
+      "Inventory Management Service",
+      "Food Waste Service",
+      "Reporting Service",
+      "User Account Management Service",
+      "Permission Service"
+    ],
+    "data_entities": [
+      "User",
+      "Role",
+      "Menu Item",
+      "Order",
+      "Order Item",
+      "Payment",
+      "Inventory Item",
+      "Menu Item Ingredient",
+      "Food Waste"
+    ],
+    "external_systems": [
+      "Relational Database (for persistent storage of all operational data)"
+    ],
+    "entry_points": [
+      "Application Startup (main method initiates the GUI)",
+      "User Login Interface",
+      "Cashier Main Application Interface",
+      "Manager Main Application Interface"
+    ],
+    "static_analysis": {
+      "apis": [],
+      "services": [],
+      "models": [],
+      "dependencies": []
+    },
+    "summary": {
+      "api_count": 0,
+      "service_count": 0,
+      "model_count": 0,
+      "dependency_count": 0
+    }
+  },
+  "architecture_summary": {
+    "api_count": 0,
+    "service_count": 0,
+    "model_count": 0,
+    "dependency_count": 0
+  },
+  "flows": {
+    "system_flow": {
+      "title": "Restaurant Management System",
+      "description": "The Restaurant Management System is a desktop application designed to streamline restaurant operations. It provides role-based functionalities for cashiers and managers, covering customer order processing, payment handling, inventory tracking, food waste recording, menu item management, user administration, and comprehensive operational reporting. The system uses a local relational database for persistent storage.",
+      "nodes": [
+        {
+          "id": "user_actor",
+          "label": "User",
+          "type": "actor",
+          "description": "Represents both Cashier and Manager roles interacting with the system through the graphical user interface.",
+          "technology": "Human",
+          "files": [],
+          "position": {
+            "x": 150,
+            "y": 300
+          }
+        },
+        {
+          "id": "app_lifecycle_auth",
+          "label": "Application Lifecycle & User Authentication UI",
+          "type": "workflow",
+          "description": "Manages the application's startup process and presents the initial login interface for users to authenticate. Delegates actual authentication logic to a dedicated service.",
+          "technology": "Java Swing",
+          "files": [
+            "restaurantmanagementsystem/RestaurantManagementSystem.java",
+            "user/LoginFrame.java",
+            "user/AbstractAppService.java",
+            "user/BusinessException.java",
+            "user/ValidationException.java"
+          ],
+          "position": {
+            "x": 430,
+            "y": 300
+          }
+        },
+        {
+          "id": "auth_permission_service",
+          "label": "Authentication & User Permissions Service",
+          "type": "service",
+          "description": "Handles user login validation, session management, and determines user permissions based on their assigned role (Cashier or Manager).",
+          "technology": "Java",
+          "files": [
+            "user/AuthenticationService.java",
+            "user/PermissionService.java",
+            "user/IAuthentication.java",
+            "user/IPermission.java",
+            "user/User.java",
+            "user/Role.java"
+          ],
+          "position": {
+            "x": 710,
+            "y": 300
+          }
+        },
+        {
+          "id": "cashier_ui_order_ops",
+          "label": "Cashier UI: Order Operations",
+          "type": "component",
+          "description": "The primary graphical interface for cashiers to manage customer orders: creating new orders, adding/removing menu items, and updating order statuses (Preparing, Ready, Served).",
+          "technology": "Java Swing",
+          "files": [
+            "cashier/CashierFrame.java",
+            "cashier/OrdersPanel.java",
+            "cashier/NewOrderDialog.java",
+            "cashier/OrderDetailsDialog.java",
+            "cashier/Order.java",
+            "cashier/OrderItem.java",
+            "cashier/OrderStatus.java"
+          ],
+          "position": {
+            "x": 990,
+            "y": 210
+          }
+        },
+        {
+          "id": "cashier_ui_payment_ops",
+          "label": "Cashier UI: Payment Operations",
+          "type": "component",
+          "description": "Enables cashiers to process various payment methods (Cash, Card, GCash, Maya), record tip amounts, view transaction history, and issue receipts and refunds.",
+          "technology": "Java Swing",
+          "files": [
+            "cashier/PaymentsPanel.java",
+            "cashier/ReceiptDialog.java",
+            "cashier/Payment.java",
+            "cashier/PaymentMethod.java",
+            "cashier/PaymentStatus.java"
+          ],
+          "position": {
+            "x": 1270,
+            "y": 260
+          }
+        },
+        {
+          "id": "order_payment_processing_logic",
+          "label": "Order & Payment Processing Logic",
+          "type": "service",
+          "description": "Implements the core business logic for order creation (including inventory checks), order status transitions, payment processing, and refund management. Utilizes DAO layer for data persistence.",
+          "technology": "Java",
+          "files": [
+            "cashier/OrderService.java",
+            "cashier/PaymentService.java",
+            "user/InsufficientInventoryException.java",
+            "user/PaymentFailedException.java"
+          ],
+          "position": {
+            "x": 1550,
+            "y": 390
+          }
+        },
+        {
+          "id": "manager_ui_ops_control",
+          "label": "Manager UI: Operational Control Panel",
+          "type": "component",
+          "description": "The central graphical interface for managers, providing a dashboard overview and navigation to all restaurant management features (menu, inventory, waste, reports, user administration).",
+          "technology": "Java Swing",
+          "files": [
+            "manager/ManagerFrame.java",
+            "manager/DashboardPanel.java",
+            "manager/MenuItemPanel.java",
+            "manager/InventoryPanel.java",
+            "manager/FoodWastePanel.java",
+            "manager/ReportsPanel.java",
+            "manager/UserManagementPanel.java",
+            "manager/IngredientDialog.java",
+            "manager/DatePickerDialog.java"
+          ],
+          "position": {
+            "x": 990,
+            "y": 390
+          }
+        },
+        {
+          "id": "menu_inv_waste_mgmt_logic",
+          "label": "Menu, Inventory & Waste Management Logic",
+          "type": "service",
+          "description": "Manages menu item CRUD, recipe linking to ingredients, inventory stock levels (updates, reorder points, expiry tracking), and recording food waste, including automated logging for expired items.",
+          "technology": "Java",
+          "files": [
+            "manager/MenuItemService.java",
+            "manager/InventoryService.java",
+            "manager/FoodWasteService.java",
+            "cashier/MenuItem.java",
+            "manager/InventoryItem.java",
+            "manager/MenuItemIngredient.java",
+            "manager/FoodWaste.java"
+          ],
+          "position": {
+            "x": 1270,
+            "y": 440
+          }
+        },
+        {
+          "id": "reporting_system_admin_logic",
+          "label": "Reporting & System Administration Logic",
+          "type": "service",
+          "description": "Generates diverse operational and financial reports (sales, revenue, inventory, food waste) and provides capabilities for user account and role management.",
+          "technology": "Java",
+          "files": [
+            "manager/ReportService.java",
+            "manager/UserManagementService.java"
+          ],
+          "position": {
+            "x": 1270,
+            "y": 620
+          }
+        },
+        {
+          "id": "dao_layer",
+          "label": "Data Access Object (DAO) Layer",
+          "type": "service",
+          "description": "A collection of Data Access Objects providing standardized interfaces for CRUD operations against the relational database for various entities like users, orders, payments, menu items, inventory, and food waste.",
+          "technology": "JDBC",
+          "files": [
+            "user/DatabaseConnection.java",
+            "user/DbUser.java",
+            "user/IUser.java",
+            "cashier/DbOrder.java",
+            "cashier/IOrder.java",
+            "cashier/DbPayment.java",
+            "cashier/IPayment.java",
+            "cashier/DbMenuItem.java",
+            "cashier/IMenuItem.java",
+            "manager/DbInventoryItem.java",
+            "manager/IInventoryItem.java",
+            "manager/DbFoodWaste.java",
+            "manager/IFoodWaste.java",
+            "manager/DbMenuItemIngredient.java",
+            "manager/IMenuItemIngredient.java"
+          ],
+          "position": {
+            "x": 1550,
+            "y": 210
+          }
+        },
+        {
+          "id": "relational_db",
+          "label": "Relational Database",
+          "type": "database",
+          "description": "Persistent storage for all application data, including users, orders, menu items, inventory, payments, and food waste records. Accessed via JDBC through the DAO Layer.",
+          "technology": "SQL (JDBC)",
+          "files": [
+            "sql file/database.sql"
+          ],
+          "position": {
+            "x": 1270,
+            "y": 80
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "user_actor",
+          "target": "app_lifecycle_auth",
+          "label": "Launches App & Inputs Credentials",
+          "description": "User initiates the application and enters login details."
+        },
+        {
+          "id": "e2",
+          "source": "app_lifecycle_auth",
+          "target": "auth_permission_service",
+          "label": "Requests User Authentication",
+          "description": "The login UI sends user credentials to the authentication service for verification."
+        },
+        {
+          "id": "e3",
+          "source": "auth_permission_service",
+          "target": "dao_layer",
+          "label": "Authenticates User/Role Data",
+          "description": "The authentication service retrieves user and role information from the database via the DAO layer."
+        },
+        {
+          "id": "e4_cashier",
+          "source": "auth_permission_service",
+          "target": "cashier_ui_order_ops",
+          "label": "Grants Cashier Access (on Success)",
+          "description": "Upon successful authentication as a Cashier, the system loads the Cashier's main order management interface."
+        },
+        {
+          "id": "e4_manager",
+          "source": "auth_permission_service",
+          "target": "manager_ui_ops_control",
+          "label": "Grants Manager Access (on Success)",
+          "description": "Upon successful authentication as a Manager, the system loads the Manager's main operational control panel."
+        },
+        {
+          "id": "e5_orders",
+          "source": "cashier_ui_order_ops",
+          "target": "order_payment_processing_logic",
+          "label": "Invokes Order Operations",
+          "description": "Cashier UI sends requests for creating new orders, modifying order items, and updating order status."
+        },
+        {
+          "id": "e6_payments",
+          "source": "cashier_ui_payment_ops",
+          "target": "order_payment_processing_logic",
+          "label": "Invokes Payment & Refund Operations",
+          "description": "Cashier UI sends requests to process customer payments, view payment history, or initiate refunds for orders."
+        },
+        {
+          "id": "e7_order_payment_dao",
+          "source": "order_payment_processing_logic",
+          "target": "dao_layer",
+          "label": "CRUD Order, Payment, Menu, Inventory Data",
+          "description": "The Order & Payment Processing Logic performs CRUD operations on orders, payments, menu items, and inventory levels through the DAO layer."
+        },
+        {
+          "id": "e8_to_payment_ui",
+          "source": "cashier_ui_order_ops",
+          "target": "cashier_ui_payment_ops",
+          "label": "Navigates to Payments",
+          "description": "Cashier navigates from managing orders to processing payments for served orders."
+        },
+        {
+          "id": "e9_manager_mgmt_ops",
+          "source": "manager_ui_ops_control",
+          "target": "menu_inv_waste_mgmt_logic",
+          "label": "Invokes Menu, Inventory, Waste Operations",
+          "description": "Manager UI sends requests to manage menu items, recipes, inventory stock, and food waste records."
+        },
+        {
+          "id": "e10_manager_admin_reports",
+          "source": "manager_ui_ops_control",
+          "target": "reporting_system_admin_logic",
+          "label": "Invokes Reporting & User Admin Operations",
+          "description": "Manager UI sends requests to generate various operational reports or to administer user accounts and roles."
+        },
+        {
+          "id": "e11_mgmt_logic_dao",
+          "source": "menu_inv_waste_mgmt_logic",
+          "target": "dao_layer",
+          "label": "CRUD Menu, Inventory, Waste & Ingredient Data",
+          "description": "The Menu, Inventory & Waste Management Logic performs CRUD operations on its respective entities through the DAO layer, including automated inventory deductions for waste."
+        },
+        {
+          "id": "e12_reports_admin_dao",
+          "source": "reporting_system_admin_logic",
+          "target": "dao_layer",
+          "label": "Retrieves Reporting Data & CRUD User Accounts",
+          "description": "The Reporting & System Administration Logic retrieves data for reports (e.g., sales, inventory) and performs CRUD operations on user accounts via the DAO layer."
+        },
+        {
+          "id": "e13_dao_db",
+          "source": "dao_layer",
+          "target": "relational_db",
+          "label": "Executes SQL Queries",
+          "description": "The Data Access Object Layer sends SQL queries to the Relational Database for all persistent data operations."
+        },
+        {
+          "id": "e14_db_dao",
+          "source": "relational_db",
+          "target": "dao_layer",
+          "label": "Returns Query Results",
+          "description": "The Relational Database returns query results to the Data Access Object Layer."
+        }
+      ]
+    },
+    "api_flow": {
+      "title": "Cashier: Login & Create Order Flow",
+      "description": "This diagram illustrates the lifecycle of a Cashier logging into the Restaurant Management System and then creating a new customer order. It covers authentication, role-based authorization, UI and business validation, inventory management, and database interactions within this desktop application context.",
+      "nodes": [
+        {
+          "id": "client_app_startup",
+          "type": "client",
+          "label": "Application Startup",
+          "description": "The desktop application is launched, initializing the GUI and presenting the LoginFrame.",
+          "files": [
+            "src/main/java/restaurantmanagementsystem/RestaurantManagementSystem.java"
+          ],
+          "position": {
+            "x": 150,
+            "y": 300
+          }
+        },
+        {
+          "id": "client_login_form",
+          "type": "client",
+          "label": "Login Form Submission",
+          "description": "User (Cashier) inputs credentials into the LoginFrame and clicks the 'Login' button.",
+          "files": [
+            "src/main/java/user/LoginFrame.java"
+          ],
+          "position": {
+            "x": 430,
+            "y": 300
+          }
+        },
+        {
+          "id": "endpoint_authenticate_user",
+          "type": "endpoint",
+          "label": "AuthenticationService.login",
+          "description": "The LoginFrame triggers the authentication service method to verify credentials.",
+          "files": [
+            "src/main/java/user/AuthenticationService.java"
+          ],
+          "position": {
+            "x": 710,
+            "y": 300
+          }
+        },
+        {
+          "id": "db_fetch_user_verify_password",
+          "type": "database",
+          "label": "Database: Fetch User & Verify Password (DbUser)",
+          "description": "Queries the 'users' table, retrieves user data, and compares the provided password (simulated verification).",
+          "files": [
+            "src/main/java/user/DbUser.java"
+          ],
+          "position": {
+            "x": 990,
+            "y": 300
+          }
+        },
+        {
+          "id": "service_permission_check",
+          "type": "service",
+          "label": "PermissionService.hasPermission (Role Check)",
+          "description": "After successful authentication, checks if the user's role (e.g., 'Cashier') is authorized to access the system.",
+          "files": [
+            "src/main/java/user/PermissionService.java"
+          ],
+          "position": {
+            "x": 1270,
+            "y": 300
+          }
+        },
+        {
+          "id": "response_login_failure",
+          "type": "error_response",
+          "label": "Login Failed (UI Alert)",
+          "description": "Displays a 'Login Failed' message to the user for invalid credentials or unauthorized access.",
+          "files": [
+            "src/main/java/user/LoginFrame.java"
+          ],
+          "position": {
+            "x": 1550,
+            "y": 210
+          }
+        },
+        {
+          "id": "response_cashier_frame_loaded",
+          "type": "response",
+          "label": "CashierFrame Loaded",
+          "description": "Upon successful authentication and authorization, the main Cashier application interface is displayed.",
+          "files": [
+            "src/main/java/cashier/CashierFrame.java"
+          ],
+          "position": {
+            "x": 1550,
+            "y": 390
+          }
+        },
+        {
+          "id": "client_new_order_dialog",
+          "type": "client",
+          "label": "New Order Dialog (Place Order UI)",
+          "description": "Cashier inputs table number and selects menu items/quantities, then clicks 'Place Order'.",
+          "files": [
+            "src/main/java/cashier/OrdersPanel.java"
+          ],
+          "position": {
+            "x": 1830,
+            "y": 300
+          }
+        },
+        {
+          "id": "endpoint_place_order_action",
+          "type": "endpoint",
+          "label": "NewOrderDialog.actionPerformed",
+          "description": "The 'Place Order' button's action listener initiates the order creation process.",
+          "files": [
+            "src/main/java/cashier/OrdersPanel.java"
+          ],
+          "position": {
+            "x": 2110,
+            "y": 300
+          }
+        },
+        {
+          "id": "middleware_ui_input_validation",
+          "type": "middleware",
+          "label": "UI Input Validation",
+          "description": "Basic GUI-level checks, e.g., ensuring selected items list is not empty before proceeding.",
+          "files": [
+            "src/main/java/cashier/OrdersPanel.java"
+          ],
+          "position": {
+            "x": 2390,
+            "y": 300
+          }
+        },
+        {
+          "id": "service_create_order",
+          "type": "service",
+          "label": "OrderService.createOrder",
+          "description": "The core business logic method responsible for creating and persisting a new order.",
+          "files": [
+            "src/main/java/cashier/OrderService.java"
+          ],
+          "position": {
+            "x": 2670,
+            "y": 300
+          }
+        },
+        {
+          "id": "middleware_business_validation_availability",
+          "type": "middleware",
+          "label": "Business Validation & Availability Check",
+          "description": "OrderService performs checks like `ensureNotEmpty`, `ensurePositive` for quantities, and `ensureMenuItemAvailable` for selected items.",
+          "files": [
+            "src/main/java/cashier/OrderService.java",
+            "src/main/java/user/AbstractAppService.java"
+          ],
+          "position": {
+            "x": 2950,
+            "y": 300
+          }
+        },
+        {
+          "id": "db_validate_menu_items",
+          "type": "database",
+          "label": "Database: Validate Menu Items (DbMenuItem)",
+          "description": "Queries the 'menu_items' table to confirm items exist and are marked as 'available'.",
+          "files": [
+            "src/main/java/cashier/DbMenuItem.java"
+          ],
+          "position": {
+            "x": 3230,
+            "y": 300
+          }
+        },
+        {
+          "id": "db_fetch_recipe",
+          "type": "database",
+          "label": "Database: Fetch Recipe Ingredients (DbMenuItemIngredient)",
+          "description": "Retrieves the list of raw ingredients and quantities required for each menu item in the order.",
+          "files": [
+            "src/main/java/manager/DbMenuItemIngredient.java"
+          ],
+          "position": {
+            "x": 3510,
+            "y": 300
+          }
+        },
+        {
+          "id": "db_check_stock",
+          "type": "database",
+          "label": "Database: Check Inventory Stock (DbInventoryItem)",
+          "description": "For each ingredient in the recipe, checks the current quantity in the 'inventory_items' table.",
+          "files": [
+            "src/main/java/manager/DbInventoryItem.java"
+          ],
+          "position": {
+            "x": 3790,
+            "y": 300
+          }
+        },
+        {
+          "id": "error_insufficient_inventory",
+          "type": "error",
+          "label": "InsufficientInventoryException",
+          "description": "Thrown by OrderService if the required quantity of any ingredient exceeds available stock.",
+          "files": [
+            "src/main/java/user/InsufficientInventoryException.java"
+          ],
+          "position": {
+            "x": 4070,
+            "y": 210
+          }
+        },
+        {
+          "id": "db_deduct_stock",
+          "type": "database",
+          "label": "Database: Deduct Inventory Stock (DbInventoryItem)",
+          "description": "Updates the 'inventory_items' table, decrementing the quantities of ingredients used in the order.",
+          "files": [
+            "src/main/java/manager/DbInventoryItem.java"
+          ],
+          "position": {
+            "x": 4070,
+            "y": 390
+          }
+        },
+        {
+          "id": "db_persist_order",
+          "type": "database",
+          "label": "Database: Persist Order (DbOrder)",
+          "description": "Saves the new order details into the 'orders' table and its associated items into 'order_items'.",
+          "files": [
+            "src/main/java/cashier/DbOrder.java"
+          ],
+          "position": {
+            "x": 4350,
+            "y": 390
+          }
+        },
+        {
+          "id": "response_order_success",
+          "type": "response",
+          "label": "Order Placed (UI Alert & Refresh)",
+          "description": "Displays a 'Order placed' success message to the Cashier and refreshes the orders list in OrdersPanel.",
+          "files": [
+            "src/main/java/cashier/OrdersPanel.java"
+          ],
+          "position": {
+            "x": 4630,
+            "y": 300
+          }
+        },
+        {
+          "id": "response_order_error",
+          "type": "error_response",
+          "label": "Order Error (UI Alert)",
+          "description": "Displays an error message (e.g., 'Invalid quantity', 'Insufficient Inventory') to the Cashier.",
+          "files": [
+            "src/main/java/cashier/OrdersPanel.java"
+          ],
+          "position": {
+            "x": 4350,
+            "y": 210
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "client_app_startup",
+          "target": "client_login_form",
+          "label": "Launches Login UI"
+        },
+        {
+          "id": "e2",
+          "source": "client_login_form",
+          "target": "endpoint_authenticate_user",
+          "label": "Login Request"
+        },
+        {
+          "id": "e3",
+          "source": "endpoint_authenticate_user",
+          "target": "db_fetch_user_verify_password",
+          "label": "Authenticate User"
+        },
+        {
+          "id": "e4",
+          "source": "db_fetch_user_verify_password",
+          "target": "service_permission_check",
+          "label": "User Data/Auth Result"
+        },
+        {
+          "id": "e5_error_login_fail",
+          "source": "db_fetch_user_verify_password",
+          "target": "response_login_failure",
+          "label": "Auth Failed / Invalid Credentials",
+          "is_error": true
+        },
+        {
+          "id": "e6_error_permission_denied",
+          "source": "service_permission_check",
+          "target": "response_login_failure",
+          "label": "Auth Failed / Permission Denied",
+          "is_error": true
+        },
+        {
+          "id": "e7",
+          "source": "service_permission_check",
+          "target": "response_cashier_frame_loaded",
+          "label": "Login Success / Load Cashier UI"
+        },
+        {
+          "id": "e8",
+          "source": "response_cashier_frame_loaded",
+          "target": "client_new_order_dialog",
+          "label": "Open New Order Dialog"
+        },
+        {
+          "id": "e9",
+          "source": "client_new_order_dialog",
+          "target": "endpoint_place_order_action",
+          "label": "Submit Order Details"
+        },
+        {
+          "id": "e10",
+          "source": "endpoint_place_order_action",
+          "target": "middleware_ui_input_validation",
+          "label": "Trigger Order Creation"
+        },
+        {
+          "id": "e11_error_ui_validation",
+          "source": "middleware_ui_input_validation",
+          "target": "response_order_error",
+          "label": "UI Validation Failed",
+          "is_error": true
+        },
+        {
+          "id": "e12",
+          "source": "middleware_ui_input_validation",
+          "target": "service_create_order",
+          "label": "Call Order Service"
+        },
+        {
+          "id": "e13",
+          "source": "service_create_order",
+          "target": "middleware_business_validation_availability",
+          "label": "Execute Business Logic"
+        },
+        {
+          "id": "e14",
+          "source": "middleware_business_validation_availability",
+          "target": "db_validate_menu_items",
+          "label": "Validate Menu Items"
+        },
+        {
+          "id": "e15_error_biz_validation",
+          "source": "middleware_business_validation_availability",
+          "target": "response_order_error",
+          "label": "Business Validation Failed (e.g. ValidationException)",
+          "is_error": true
+        },
+        {
+          "id": "e16",
+          "source": "db_validate_menu_items",
+          "target": "db_fetch_recipe",
+          "label": "Menu Items Valid, Fetch Recipe"
+        },
+        {
+          "id": "e17",
+          "source": "db_fetch_recipe",
+          "target": "db_check_stock",
+          "label": "Recipe Retrieved, Check Inventory"
+        },
+        {
+          "id": "e18_error_inventory_fail",
+          "source": "db_check_stock",
+          "target": "error_insufficient_inventory",
+          "label": "Stock Insufficient"
+        },
+        {
+          "id": "e19_error_inventory_display",
+          "source": "error_insufficient_inventory",
+          "target": "response_order_error",
+          "label": "Display Insufficient Stock Error",
+          "is_error": true
+        },
+        {
+          "id": "e20",
+          "source": "db_check_stock",
+          "target": "db_deduct_stock",
+          "label": "Stock Available, Deduct Inventory"
+        },
+        {
+          "id": "e21",
+          "source": "db_deduct_stock",
+          "target": "db_persist_order",
+          "label": "Inventory Deducted, Persist Order"
+        },
+        {
+          "id": "e22",
+          "source": "db_persist_order",
+          "target": "response_order_success",
+          "label": "Order Saved, Display Success"
+        }
+      ]
+    },
+    "data_flow": {
+      "title": "Cashier Order & Payment Data Flow",
+      "description": "This diagram illustrates the data movement and transformations involved in a cashier processing a customer order, from initial entry to payment and receipt generation. It highlights key data entities, validation steps, and persistence to the database.",
+      "nodes": [
+        {
+          "id": "cashier_order_input",
+          "type": "input",
+          "label": "Cashier Order Input",
+          "description": "The cashier initiates an order via the GUI, selecting menu items, quantities, and assigning a table number. This is the initial user interaction point.",
+          "data_type": "User GUI Interaction",
+          "position": {
+            "x": 150,
+            "y": 300
+          }
+        },
+        {
+          "id": "new_order_request_payload",
+          "type": "input",
+          "label": "New Order Request",
+          "description": "A structured data payload (DTO) containing the 'tableNumber' and a list of requested items, each with 'menuItemId' and 'quantity'.",
+          "data_type": "{tableNumber: string, orderItems: [{menuItemId: int, quantity: int}]}",
+          "validation": "Table number must be provided, order items list cannot be empty, item quantities must be positive. Menu items must exist and be available.",
+          "position": {
+            "x": 430,
+            "y": 300
+          }
+        },
+        {
+          "id": "menu_item_model",
+          "type": "model",
+          "label": "Menu Item",
+          "description": "The data model for a single menu item, including its ID, name, price, category, and availability status. Read from the database.",
+          "data_type": "MenuItem object",
+          "relationship": "Linked to OrderItem; consumes InventoryItem via MenuItemIngredient.",
+          "position": {
+            "x": 1550,
+            "y": 260
+          }
+        },
+        {
+          "id": "inventory_item_model",
+          "type": "model",
+          "label": "Inventory Item",
+          "description": "The data model for raw ingredients or stockable items, including ID, name, current 'quantity', unit, cost, and 'reorder_level'. Read from the database.",
+          "data_type": "InventoryItem object",
+          "relationship": "Consumed by Menu Item (via MenuItemIngredient) during order creation.",
+          "position": {
+            "x": 1550,
+            "y": 440
+          }
+        },
+        {
+          "id": "order_creation_transformation",
+          "type": "transform",
+          "label": "Order Creation & Inventory Deduction",
+          "description": "This service layer logic (`OrderService.createOrder`) validates the incoming order request. It verifies menu item availability, checks if sufficient 'Inventory Item' quantities exist (based on 'MenuItemIngredient' linkages), deducts stock, calculates the total order amount, and sets the initial order status ('Preparing').",
+          "position": {
+            "x": 1830,
+            "y": 80
+          }
+        },
+        {
+          "id": "order_order_item_model",
+          "type": "model",
+          "label": "Order & Order Item",
+          "description": "The comprehensive data model for a customer's order. An 'Order' contains basic details (ID, table number, status, creation time, total amount) and a collection of 'OrderItem' models, each representing a specific 'Menu Item' and its quantity.",
+          "data_type": "Order object (contains list of OrderItem objects)",
+          "validation": "Order status transitions (e.g., 'Preparing' -> 'Ready' -> 'Served' -> 'Completed' or 'Cancelled') are enforced.",
+          "position": {
+            "x": 1550,
+            "y": 80
+          }
+        },
+        {
+          "id": "relational_database",
+          "type": "storage",
+          "label": "Restaurant DB",
+          "description": "The central persistent storage for all operational data, including 'User', 'Menu Item', 'Inventory Item', 'Order', 'Order Item', 'Payment', and 'Food Waste' records.",
+          "data_type": "SQL Tables (e.g., 'orders', 'order_items', 'menu_items', 'inventory_items', 'payments')",
+          "position": {
+            "x": 1830,
+            "y": 260
+          }
+        },
+        {
+          "id": "active_orders_display",
+          "type": "output",
+          "label": "Active Orders Display",
+          "description": "The GUI component (e.g., 'OrdersPanel') that presents a list of current orders (typically 'Preparing', 'Ready', 'Served') to the cashier. Orders can be selected for status updates or payment.",
+          "data_type": "Table/List of Order summaries",
+          "position": {
+            "x": 1550,
+            "y": 620
+          }
+        },
+        {
+          "id": "payment_request_payload",
+          "type": "input",
+          "label": "Payment Request",
+          "description": "A structured data payload (DTO) containing the 'orderId' to be paid, the 'tipAmount', and the 'paymentMethod' (e.g., 'Cash', 'Card', 'GCash', 'Maya').",
+          "data_type": "{orderId: int, tipAmount: double, paymentMethod: string}",
+          "validation": "Tip amount must be non-negative. Payment method must be valid. The linked order must be in 'Served' or 'Ready' status and not already have a completed payment.",
+          "position": {
+            "x": 1830,
+            "y": 620
+          }
+        },
+        {
+          "id": "payment_processing_transformation",
+          "type": "transform",
+          "label": "Payment Processing & Order Completion",
+          "description": "This service layer logic (`PaymentService.processPayment`) validates the payment request. It simulates the payment transaction, generates a unique 'transaction_id', and updates the associated 'Order' status to 'Completed'. It creates a 'Payment' model based on the transaction details.",
+          "position": {
+            "x": 2110,
+            "y": 300
+          }
+        },
+        {
+          "id": "payment_model",
+          "type": "model",
+          "label": "Payment",
+          "description": "The data model for a payment transaction, including its ID, the 'linkedOrderId', 'paymentAmount', 'paymentTipAmount', 'paymentMethod', 'paymentStatus' (e.g., 'Completed', 'Failed', 'Refunded'), 'paymentTimestamp', and 'paymentTransactionId'.",
+          "data_type": "Payment object",
+          "position": {
+            "x": 1550,
+            "y": 800
+          }
+        },
+        {
+          "id": "payment_receipt_output",
+          "type": "output",
+          "label": "Payment Receipt",
+          "description": "A formatted summary of the completed payment transaction, including order details, item breakdown, subtotal, tip, total amount, and payment method. Displayed to the cashier, potentially for printing.",
+          "data_type": "Formatted String/HTML for Receipt (ReceiptDialog)",
+          "position": {
+            "x": 1550,
+            "y": 980
+          }
+        },
+        {
+          "id": "completed_transactions_display",
+          "type": "output",
+          "label": "Completed Transactions Display",
+          "description": "The GUI component (e.g., 'PaymentsPanel') that shows a historical list of all payment transactions, typically filtered by date, including their status (Completed, Refunded, Failed).",
+          "data_type": "Table/List of Payment summaries",
+          "position": {
+            "x": 1830,
+            "y": 440
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_cashier_input_to_request",
+          "source": "cashier_order_input",
+          "target": "new_order_request_payload",
+          "label": "Captures Order Details",
+          "description": "Cashier interaction in the GUI generates a structured 'New Order Request' payload."
+        },
+        {
+          "id": "e_request_to_order_creation",
+          "source": "new_order_request_payload",
+          "target": "order_creation_transformation",
+          "label": "Initiate Order Creation",
+          "description": "The 'New Order Request' payload is sent to the order creation and validation logic."
+        },
+        {
+          "id": "e_db_read_menu_items",
+          "source": "relational_database",
+          "target": "menu_item_model",
+          "label": "Read Menu Items",
+          "description": "Order creation logic queries the database to retrieve 'Menu Item' details for validation and pricing."
+        },
+        {
+          "id": "e_db_read_inventory_items",
+          "source": "relational_database",
+          "target": "inventory_item_model",
+          "label": "Read Inventory Items & Ingredients",
+          "description": "Order creation logic queries the database to retrieve 'Inventory Item' details for stock checks (via 'MenuItemIngredient' linkages)."
+        },
+        {
+          "id": "e_menu_to_order_creation",
+          "source": "menu_item_model",
+          "target": "order_creation_transformation",
+          "label": "Provide Menu Details",
+          "description": "Retrieved 'Menu Item' data is used by the order creation process for validation and total calculation."
+        },
+        {
+          "id": "e_inventory_to_order_creation",
+          "source": "inventory_item_model",
+          "target": "order_creation_transformation",
+          "label": "Provide Inventory Details & Deduct Stock",
+          "description": "Retrieved 'Inventory Item' data is used for stock checks, and quantities are deducted/updated in the database upon successful order creation."
+        },
+        {
+          "id": "e_order_creation_to_model",
+          "source": "order_creation_transformation",
+          "target": "order_order_item_model",
+          "label": "Generate Order Model",
+          "description": "Upon successful creation, the transformation logic produces a new 'Order' and associated 'OrderItem' model."
+        },
+        {
+          "id": "e_order_write_to_db",
+          "source": "order_order_item_model",
+          "target": "relational_database",
+          "label": "Write New Order",
+          "description": "The newly generated 'Order' and its 'OrderItem's are persisted to the 'Restaurant DB'."
+        },
+        {
+          "id": "e_db_read_active_orders",
+          "source": "relational_database",
+          "target": "active_orders_display",
+          "label": "Read Active Orders",
+          "description": "The 'Active Orders Display' continuously reads and refreshes its view of active orders from the database."
+        },
+        {
+          "id": "e_active_orders_to_payment_request",
+          "source": "active_orders_display",
+          "target": "payment_request_payload",
+          "label": "Select Order for Payment",
+          "description": "Cashier selects an order from the 'Active Orders Display' to initiate the payment process, leading to the 'Payment Request' payload being prepared."
+        },
+        {
+          "id": "e_payment_request_to_processing",
+          "source": "payment_request_payload",
+          "target": "payment_processing_transformation",
+          "label": "Initiate Payment Processing",
+          "description": "The 'Payment Request' payload is sent to the payment processing and order completion logic."
+        },
+        {
+          "id": "e_db_read_order_for_payment",
+          "source": "relational_database",
+          "target": "order_order_item_model",
+          "label": "Read Order Details for Payment",
+          "description": "Payment processing retrieves the specific 'Order' details from the database to validate its status and retrieve the total amount."
+        },
+        {
+          "id": "e_order_to_payment_processing",
+          "source": "order_order_item_model",
+          "target": "payment_processing_transformation",
+          "label": "Provide Order Details & Update Status",
+          "description": "The 'Order' details are used for final payment calculation, and its status is updated to 'Completed' as part of the payment transaction."
+        },
+        {
+          "id": "e_order_status_update_to_db",
+          "source": "order_order_item_model",
+          "target": "relational_database",
+          "label": "Update Order Status",
+          "description": "The 'Order' model, with its updated 'Completed' status, is written back to the 'Restaurant DB'."
+        },
+        {
+          "id": "e_payment_processing_to_model",
+          "source": "payment_processing_transformation",
+          "target": "payment_model",
+          "label": "Generate Payment Model",
+          "description": "Upon successful payment processing, a new 'Payment' object is generated."
+        },
+        {
+          "id": "e_payment_write_to_db",
+          "source": "payment_model",
+          "target": "relational_database",
+          "label": "Write New Payment",
+          "description": "The newly generated 'Payment' record is persisted to the 'Restaurant DB'."
+        },
+        {
+          "id": "e_payment_processing_to_receipt",
+          "source": "payment_processing_transformation",
+          "target": "payment_receipt_output",
+          "label": "Generate Receipt Data",
+          "description": "Details from the successful payment and associated order are formatted into 'Payment Receipt' data."
+        },
+        {
+          "id": "e_receipt_to_display",
+          "source": "payment_receipt_output",
+          "target": "completed_transactions_display",
+          "label": "Display Receipt & Refresh Transactions",
+          "description": "The generated receipt is shown to the cashier, and the 'Completed Transactions Display' is updated to include the new payment."
+        },
+        {
+          "id": "e_db_read_completed_transactions",
+          "source": "relational_database",
+          "target": "completed_transactions_display",
+          "label": "Read Payment History",
+          "description": "The 'Completed Transactions Display' retrieves and displays historical payment transactions from the database."
+        }
+      ]
+    }
+  },
+  "diff_history": []
+}
